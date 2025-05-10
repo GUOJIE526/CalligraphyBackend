@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.13.35931.197 d17.13
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Calligraphy", "Calligraphy\Calligraphy.csproj", "{014A6876-1667-4157-9CED-DB268947AC0C}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{014A6876-1667-4157-9CED-DB268947AC0C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{014A6876-1667-4157-9CED-DB268947AC0C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{014A6876-1667-4157-9CED-DB268947AC0C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{014A6876-1667-4157-9CED-DB268947AC0C}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {A46243C5-DDB3-4F84-B930-8962554D4A61}
+	EndGlobalSection
+EndGlobal
