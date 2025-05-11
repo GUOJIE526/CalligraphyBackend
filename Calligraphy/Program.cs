@@ -1,5 +1,6 @@
 using Calligraphy.Data;
 using Calligraphy.Models;
+using Calligraphy.Services;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
@@ -18,6 +19,17 @@ builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
     .AddEntityFrameworkStores<ApplicationDbContext>();
 builder.Services.AddControllersWithViews();
+builder.Services.AddHttpContextAccessor();
+//註冊AuthHelper服務
+builder.Services.AddScoped<AuthHelper>();
+//驗證登入cookie
+builder.Services.AddAuthentication("AdminCookie").AddCookie("AdminCookie", options =>
+{
+    options.LoginPath = "/Admin/Login";
+    options.AccessDeniedPath = "/Admin/Login";
+    options.ExpireTimeSpan = TimeSpan.FromMinutes(30);
+    options.SlidingExpiration = true;
+});
 
 var app = builder.Build();
 
@@ -37,7 +49,7 @@ app.UseHttpsRedirection();
 app.UseStaticFiles();
 
 app.UseRouting();
-
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllerRoute(

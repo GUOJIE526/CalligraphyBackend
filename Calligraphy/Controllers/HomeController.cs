@@ -1,9 +1,11 @@
 using System.Diagnostics;
 using Calligraphy.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Calligraphy.Controllers
 {
+    [Authorize(AuthenticationSchemes = "AdminCookie")]
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;
