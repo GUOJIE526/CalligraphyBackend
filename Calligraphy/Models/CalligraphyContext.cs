@@ -38,9 +38,7 @@ public partial class CalligraphyContext : DbContext
             entity.Property(e => e.ArtworkId)
                 .HasDefaultValueSql("(newid())")
                 .HasColumnName("ARTWORK_ID");
-            entity.Property(e => e.CreateDate)
-                .HasColumnType("datetime")
-                .HasColumnName("CREATE_DATE");
+            entity.Property(e => e.CreateDate).HasColumnName("CREATE_DATE");
             entity.Property(e => e.CreateFrom)
                 .HasMaxLength(50)
                 .HasColumnName("CREATE_FROM");
@@ -65,9 +63,7 @@ public partial class CalligraphyContext : DbContext
             entity.Property(e => e.Modifier)
                 .HasMaxLength(50)
                 .HasColumnName("MODIFIER");
-            entity.Property(e => e.ModifyDate)
-                .HasColumnType("datetime")
-                .HasColumnName("MODIFY_DATE");
+            entity.Property(e => e.ModifyDate).HasColumnName("MODIFY_DATE");
             entity.Property(e => e.ModifyFrom)
                 .HasMaxLength(50)
                 .HasColumnName("MODIFY_FROM");
@@ -93,9 +89,7 @@ public partial class CalligraphyContext : DbContext
                 .HasDefaultValueSql("(newid())")
                 .HasColumnName("COMMENT_ID");
             entity.Property(e => e.ArtworkId).HasColumnName("ARTWORK_ID");
-            entity.Property(e => e.CreateDate)
-                .HasColumnType("datetime")
-                .HasColumnName("CREATE_DATE");
+            entity.Property(e => e.CreateDate).HasColumnName("CREATE_DATE");
             entity.Property(e => e.CreateFrom)
                 .HasMaxLength(50)
                 .HasColumnName("CREATE_FROM");
@@ -109,9 +103,7 @@ public partial class CalligraphyContext : DbContext
             entity.Property(e => e.Modifier)
                 .HasMaxLength(50)
                 .HasColumnName("MODIFIER");
-            entity.Property(e => e.ModifyDate)
-                .HasColumnType("datetime")
-                .HasColumnName("MODIFY_DATE");
+            entity.Property(e => e.ModifyDate).HasColumnName("MODIFY_DATE");
             entity.Property(e => e.ModifyFrom)
                 .HasMaxLength(50)
                 .HasColumnName("MODIFY_FROM");
@@ -137,9 +129,7 @@ public partial class CalligraphyContext : DbContext
             entity.Property(e => e.BannerImageUrl)
                 .HasMaxLength(255)
                 .HasColumnName("BANNER_IMAGE_URL");
-            entity.Property(e => e.CreateDate)
-                .HasColumnType("datetime")
-                .HasColumnName("CREATE_DATE");
+            entity.Property(e => e.CreateDate).HasColumnName("CREATE_DATE");
             entity.Property(e => e.CreateFrom)
                 .HasMaxLength(50)
                 .HasColumnName("CREATE_FROM");
@@ -147,21 +137,15 @@ public partial class CalligraphyContext : DbContext
                 .HasMaxLength(50)
                 .HasColumnName("CREATOR");
             entity.Property(e => e.Description).HasColumnName("DESCRIPTION");
-            entity.Property(e => e.EndDate)
-                .HasColumnType("datetime")
-                .HasColumnName("END_DATE");
+            entity.Property(e => e.EndDate).HasColumnName("END_DATE");
             entity.Property(e => e.Modifier)
                 .HasMaxLength(50)
                 .HasColumnName("MODIFIER");
-            entity.Property(e => e.ModifyDate)
-                .HasColumnType("datetime")
-                .HasColumnName("MODIFY_DATE");
+            entity.Property(e => e.ModifyDate).HasColumnName("MODIFY_DATE");
             entity.Property(e => e.ModifyFrom)
                 .HasMaxLength(50)
                 .HasColumnName("MODIFY_FROM");
-            entity.Property(e => e.StartDate)
-                .HasColumnType("datetime")
-                .HasColumnName("START_DATE");
+            entity.Property(e => e.StartDate).HasColumnName("START_DATE");
             entity.Property(e => e.Title)
                 .HasMaxLength(200)
                 .HasColumnName("TITLE");
@@ -177,9 +161,7 @@ public partial class CalligraphyContext : DbContext
                 .HasDefaultValueSql("(newid())")
                 .HasColumnName("LIKE_ID");
             entity.Property(e => e.ArtworkId).HasColumnName("ARTWORK_ID");
-            entity.Property(e => e.CreateDate)
-                .HasColumnType("datetime")
-                .HasColumnName("CREATE_DATE");
+            entity.Property(e => e.CreateDate).HasColumnName("CREATE_DATE");
             entity.Property(e => e.CreateFrom)
                 .HasMaxLength(50)
                 .HasColumnName("CREATE_FROM");
@@ -193,9 +175,7 @@ public partial class CalligraphyContext : DbContext
             entity.Property(e => e.Modifier)
                 .HasMaxLength(50)
                 .HasColumnName("MODIFIER");
-            entity.Property(e => e.ModifyDate)
-                .HasColumnType("datetime")
-                .HasColumnName("MODIFY_DATE");
+            entity.Property(e => e.ModifyDate).HasColumnName("MODIFY_DATE");
             entity.Property(e => e.ModifyFrom)
                 .HasMaxLength(50)
                 .HasColumnName("MODIFY_FROM");
@@ -218,9 +198,7 @@ public partial class CalligraphyContext : DbContext
             entity.Property(e => e.Action)
                 .HasMaxLength(100)
                 .HasColumnName("ACTION");
-            entity.Property(e => e.CreateDate)
-                .HasColumnType("datetime")
-                .HasColumnName("CREATE_DATE");
+            entity.Property(e => e.CreateDate).HasColumnName("CREATE_DATE");
             entity.Property(e => e.CreateFrom)
                 .HasMaxLength(50)
                 .HasColumnName("CREATE_FROM");
@@ -237,9 +215,7 @@ public partial class CalligraphyContext : DbContext
             entity.Property(e => e.Modifier)
                 .HasMaxLength(50)
                 .HasColumnName("MODIFIER");
-            entity.Property(e => e.ModifyDate)
-                .HasColumnType("datetime")
-                .HasColumnName("MODIFY_DATE");
+            entity.Property(e => e.ModifyDate).HasColumnName("MODIFY_DATE");
             entity.Property(e => e.ModifyFrom)
                 .HasMaxLength(50)
                 .HasColumnName("MODIFY_FROM");
@@ -268,9 +244,7 @@ public partial class CalligraphyContext : DbContext
             entity.Property(e => e.UserId)
                 .HasDefaultValueSql("(newid())")
                 .HasColumnName("USER_ID");
-            entity.Property(e => e.CreateDate)
-                .HasColumnType("datetime")
-                .HasColumnName("CREATE_DATE");
+            entity.Property(e => e.CreateDate).HasColumnName("CREATE_DATE");
             entity.Property(e => e.CreateFrom)
                 .HasMaxLength(50)
                 .HasColumnName("CREATE_FROM");
@@ -283,12 +257,17 @@ public partial class CalligraphyContext : DbContext
             entity.Property(e => e.IsActive)
                 .HasDefaultValue(true)
                 .HasColumnName("IS_ACTIVE");
+            entity.Property(e => e.MailConfirm).HasColumnName("MAIL_CONFIRM");
+            entity.Property(e => e.MailConfirmcode)
+                .HasMaxLength(50)
+                .HasColumnName("MAIL_CONFIRMCODE");
+            entity.Property(e => e.MailConfirmdate)
+                .HasColumnType("datetime")
+                .HasColumnName("MAIL_CONFIRMDATE");
             entity.Property(e => e.Modifier)
                 .HasMaxLength(50)
                 .HasColumnName("MODIFIER");
-            entity.Property(e => e.ModifyDate)
-                .HasColumnType("datetime")
-                .HasColumnName("MODIFY_DATE");
+            entity.Property(e => e.ModifyDate).HasColumnName("MODIFY_DATE");
             entity.Property(e => e.ModifyFrom)
                 .HasMaxLength(50)
                 .HasColumnName("MODIFY_FROM");

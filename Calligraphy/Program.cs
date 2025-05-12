@@ -1,6 +1,7 @@
 using Calligraphy.Data;
 using Calligraphy.Models;
 using Calligraphy.Services;
+using Calligraphy.Services.Interfaces;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
@@ -22,6 +23,7 @@ builder.Services.AddControllersWithViews();
 builder.Services.AddHttpContextAccessor();
 //註冊AuthHelper服務
 builder.Services.AddScoped<AuthHelper>();
+builder.Services.AddScoped<IEmailService, SmtpEmailService>();
 //驗證登入cookie
 builder.Services.AddAuthentication("AdminCookie").AddCookie("AdminCookie", options =>
 {

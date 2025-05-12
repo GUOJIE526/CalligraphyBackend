@@ -25,13 +25,13 @@ public partial class TbExhArtwork
 
     public bool IsVisible { get; set; }
 
-    public DateTime CreateDate { get; set; }
+    public DateTimeOffset CreateDate { get; set; }
 
     public string? CreateFrom { get; set; }
 
     public string? Creator { get; set; }
 
-    public DateTime? ModifyDate { get; set; }
+    public DateTimeOffset? ModifyDate { get; set; }
 
     public string? ModifyFrom { get; set; }
 

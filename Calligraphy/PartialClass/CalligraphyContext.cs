@@ -19,19 +19,30 @@ namespace Calligraphy.Models
         //讓EF Core每次SaveChange幫你生成DateTimeOffset.Now
         public override int SaveChanges()
         {
+            ApplyAuditInfo();
+            return base.SaveChanges();
+        }
+
+        public override async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
+        {
+            ApplyAuditInfo();
+            return await base.SaveChangesAsync(cancellationToken);
+        }
+
+        private void ApplyAuditInfo()
+        {
             var entries = ChangeTracker.Entries();
             foreach (var entry in entries)
             {
                 if (entry.State == EntityState.Added)
                 {
-                    entry.Property("CREATE_DATE").CurrentValue = DateTimeOffset.Now;
+                    entry.Property("CreateDate").CurrentValue = DateTimeOffset.Now;
                 }
                 else if (entry.State == EntityState.Modified)
                 {
-                    entry.Property("MODIFY_DATE").CurrentValue = DateTimeOffset.Now;
+                    entry.Property("ModifyDate").CurrentValue = DateTimeOffset.Now;
                 }
             }
-            return base.SaveChanges();
         }
     }
 }
