@@ -28,6 +28,10 @@ namespace Calligraphy.Controllers
             _logger = logger;
         }
 
+        /// <summary>
+        /// 登入頁面
+        /// </summary>
+        /// <returns></returns>
         [AllowAnonymous]
         [HttpGet]
         public IActionResult Login()
@@ -35,6 +39,11 @@ namespace Calligraphy.Controllers
             return View();
         }
 
+        /// <summary>
+        /// 登入頁面
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
         [AllowAnonymous]
         [HttpPost]
         public async Task<IActionResult> Login(LoginViewModel model)
@@ -50,14 +59,28 @@ namespace Calligraphy.Controllers
                 ModelState.AddModelError("", "帳號或密碼錯誤");
                 return View(model);
             }
+            if (user.MailConfirm == false)
+            {
+                ModelState.AddModelError("", "帳號尚未驗證");
+                return View(model);
+            }
             await _authHelper.SignInUserAsync(user, model.RememberMe);
             return RedirectToAction("Index", "Home");
         }
 
+        /// <summary>
+        /// 註冊頁面
+        /// </summary>
+        /// <returns></returns>
         [AllowAnonymous]
         [HttpGet]
         public IActionResult Register() => View();
 
+        /// <summary>
+        /// 註冊頁面
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
         [AllowAnonymous]
         [HttpPost]
         public async Task<IActionResult> Register(RegisterViewModel model)
@@ -98,9 +121,71 @@ namespace Calligraphy.Controllers
                 _logger.LogError("Email sending timed out.");
             }
             await _context.SaveChangesAsync();
-            await _authHelper.SignInUserAsync(user, true);
-            return RedirectToAction("Index", "Home");
+            //await _authHelper.SignInUserAsync(user, true);
+            return RedirectToAction("RegisterRemind", "Admin", new {email = user.Username});
         }
+
+        /// <summary>
+        /// 註冊後的提醒頁面
+        /// </summary>
+        /// <param name="email"></param>
+        /// <returns></returns>
+        [AllowAnonymous]
+        public IActionResult RegisterRemind(string email)
+        {
+            ViewBag.Email = email;
+            return View();
+        }
+
+        /// <summary>
+        /// 重新寄送驗證信
+        /// </summary>
+        /// <param name="email"></param>
+        /// <returns></returns>
+        [AllowAnonymous]
+        [HttpPost]
+        public async Task<IActionResult> ResendConfirmEmail(string email)
+        {
+            var user = await _context.TbExhUser
+                .FirstOrDefaultAsync(u => u.Username == email);
+            if (user == null)
+            {
+                ViewBag.ErrorMessage = "使用者錯誤";
+                ViewBag.Email = email;
+                return View("RegisterRemind");
+            }
+            if(user.MailConfirm == true)
+            {
+                ViewBag.ErrorMessage = "使用者已驗證";
+                return View("RegisterRemind");
+            }
+            user.MailConfirmcode = Guid.NewGuid().ToString();
+            user.MailConfirmdate = DateTime.UtcNow.AddDays(1);
+            //建立驗證連結
+            var confirmLink = Url.Action("ConfirmEmail", "Admin", new { token = user.MailConfirmcode, email = user.Username }, Request.Scheme);
+            try
+            {
+                await _emailService.SendAsync(user.Username, "RuoliCalligraphy驗證信", $@"
+                                                                                        <p>親愛的使用者您好，</p>
+                                                                                        <p>請點擊以下連結以完成帳號驗證：</p>
+                                                                                        <p><a href=""{confirmLink}"">{confirmLink}</a></p>
+                                                                                        <p>此連結將於 24 小時內失效。</p>");
+            }
+            catch (TaskCanceledException)
+            {
+                _logger.LogError("Email sending timed out.");
+            }
+            await _context.SaveChangesAsync();
+            return RedirectToAction("RegisterRemind", "Admin", new { email = user.Username });
+        }
+
+        /// <summary>
+        /// 驗證信連結
+        /// </summary>
+        /// <param name="token"></param>
+        /// <param name="email"></param>
+        /// <returns></returns>
+
         [AllowAnonymous]
         public async Task<IActionResult> ConfirmEmail(string token, string email)
         {
@@ -113,13 +198,80 @@ namespace Calligraphy.Controllers
             user.MailConfirm = true;
             await _context.SaveChangesAsync();
             await _authHelper.SignInUserAsync(user, true);
-            return RedirectToAction("Index", "Home");
+            return RedirectToAction("MailConfirmWelcome", "Admin");
         }
 
+        /// <summary>
+        /// 註冊成功後的歡迎頁面
+        /// </summary>
+        /// <returns></returns>
+        [AllowAnonymous]
+        public IActionResult MailConfirmWelcome() => View();
+
+        /// <summary>
+        /// 忘記密碼頁面
+        /// </summary>
+        /// <param name="check"></param>
+        /// <returns></returns>
+        [AllowAnonymous]
+        public IActionResult ForgotPassword(bool check)
+        {
+            if (check)
+            {
+                ViewBag.Check = check;
+                ViewBag.Message = "已寄送驗證信，請至信箱收信";
+            }
+            return View();
+        }
+
+        /// <summary>
+        /// 忘記密碼頁面
+        /// </summary>
+        /// <param name="email"></param>
+        /// <returns></returns>
+        [AllowAnonymous]
+        [HttpPost]
+        public async Task<IActionResult> ForgotPassword(string email)
+        {
+            bool check = false;
+            var user = await _context.TbExhUser
+                .FirstOrDefaultAsync(u => u.Username == email);
+            if (user == null)
+            {
+                ModelState.AddModelError("", "使用者不存在");
+                return View();
+            }
+            var resetToken = Guid.NewGuid().ToString();
+            user.MailConfirmcode = resetToken;
+            user.MailConfirmdate = DateTime.UtcNow.AddDays(1);
+            //建立驗證連結
+            var resetLink = Url.Action("ResetPassword", "Admin", new { token = resetToken, email = user.Username }, Request.Scheme);
+            try
+            {
+                await _emailService.SendAsync(user.Username, "RuoliCalligraphy密碼重設信", $@"
+                                                                                        <p>親愛的使用者您好，</p>
+                                                                                        <p>請點擊以下連結以重設密碼：</p>
+                                                                                        <p><a href=""{resetLink}"">{resetLink}</a></p>
+                                                                                        <p>此連結將於 24 小時內失效。</p>");
+                check = true;
+            }
+            catch (TaskCanceledException)
+            {
+                _logger.LogError("Email sending timed out.");
+            }
+            await _context.SaveChangesAsync();
+            return RedirectToAction("ForgotPassword", "Admin", new { check });
+        }
+
+        /// <summary>
+        /// 登出
+        /// </summary>
+        /// <returns></returns>
+        [AllowAnonymous]
         public async Task<IActionResult> Logout()
         {
             await HttpContext.SignOutAsync("AdminCookie");
-            return RedirectToAction("Login");
+            return View("Login");
         }
     }
 }

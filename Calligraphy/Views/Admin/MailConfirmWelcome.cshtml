@@ -1,0 +1,29 @@
+﻿
+@{
+    ViewData["Title"] = "帳號啟用成功";
+    Layout = null;
+}
+<link href="~/css/mailconfirmwelcome.css" rel="stylesheet" />
+
+<div class="box">
+    <div class="notice-container">
+        <h2>帳號啟用成功！</h2>
+        <p>感謝您註冊 RuoliCalligraphy，您的帳號已成功啟用。</p>
+        <p>現在您可以使用您的帳號登入並開始使用我們的服務。</p>
+        <p>如果您有任何問題或需要幫助，請隨時聯繫我們的客服團隊。</p>
+        <p>5秒後將自動轉跳</p>
+        <!-- From Uiverse.io by AbanoubMagdy1 -->
+        <div class="loader">
+            <div class="circle"></div>
+            <div class="circle"></div>
+            <div class="circle"></div>
+            <div class="circle"></div>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+    setTimeout(function () {
+        window.location.href = '@Url.Action("Index", "Home")';
+    }, 5000); //  5seconds
+</script>
