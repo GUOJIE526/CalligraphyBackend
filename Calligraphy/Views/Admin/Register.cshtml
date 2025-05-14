@@ -13,21 +13,20 @@
         </div>
         <div class="card-body">
             <form asp-action="Register" method="post">
-                @Html.ValidationSummary("", new { @class = "text-danger" })
                 <div class="form-group">
-                    <label asp-for="UserName">Email:</label>
-                    <input asp-for="UserName" class="form-control" id="email" type="email">
-                    <span asp-validation-for="UserName" class="text-danger"></span>
+                    <label asp-for="Username">Email:</label>
+                    <input asp-for="Username" class="form-control" id="email" type="email">
+                    <span class="mb-2">@Html.ValidationMessageFor(model => model.Username, "", new { @class = "text-danger" })</span>
                 </div>
                 <div class="form-group">
                     <label asp-for="Password">Password:</label>
                     <input asp-for="Password" class="form-control" id="password" type="password">
-                    <span asp-validation-for="Password" class="text-danger"></span>
+                    <span class="mb-2"></span>@Html.ValidationMessageFor(model => model.Password, "", new { @class = "text-danger" })
                 </div>
                 <div class="form-group">
                     <label asp-for="ConfirmPassword">Confirm Password:</label>
                     <input asp-for="ConfirmPassword" class="form-control" id="confirm-password" type="password">
-                    <span asp-validation-for="ConfirmPassword" class="text-danger"></span>
+                    <span class="mb-2"></span>@Html.ValidationMessageFor(model => model.ConfirmPassword, "", new { @class = "text-danger" })
                 </div>
                 <input type="submit" class="btn" value="送出">
             </form>

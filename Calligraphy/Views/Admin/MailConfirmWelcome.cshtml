@@ -11,9 +11,10 @@
         <p>感謝您註冊 RuoliCalligraphy，您的帳號已成功啟用。</p>
         <p>現在您可以使用您的帳號登入並開始使用我們的服務。</p>
         <p>如果您有任何問題或需要幫助，請隨時聯繫我們的客服團隊。</p>
-        <p>5秒後將自動轉跳</p>
+        <p><span>5</span>秒後將自動轉跳</p>
+        <p>如果沒有自動轉跳，請點擊<a href="@Url.Action("Index", "Home")"> (這裡) </a></p>
         <!-- From Uiverse.io by AbanoubMagdy1 -->
-        <div class="loader">
+        <div class="loader mt-2">
             <div class="circle"></div>
             <div class="circle"></div>
             <div class="circle"></div>
@@ -26,4 +27,15 @@
     setTimeout(function () {
         window.location.href = '@Url.Action("Index", "Home")';
     }, 5000); //  5seconds
+
+    //倒數5秒
+    var countdown = document.querySelector('span');
+    var timeLeft = 5;
+    var countdownInterval = setInterval(function () {
+        timeLeft--;
+        countdown.textContent = timeLeft;
+        if (timeLeft <= 0) {
+            clearInterval(countdownInterval);
+        }
+    }, 1000);
 </script>

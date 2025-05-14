@@ -56,12 +56,12 @@ namespace Calligraphy.Controllers
                 .FirstOrDefaultAsync(u => u.Username == model.Username);
             if (user == null || !BCrypt.Net.BCrypt.Verify(model.Password, user.PasswordHash))
             {
-                ModelState.AddModelError("", "帳號或密碼錯誤");
+                ModelState.AddModelError("Password", "帳號或密碼錯誤");
                 return View(model);
             }
             if (user.MailConfirm == false)
             {
-                ModelState.AddModelError("", "帳號尚未驗證");
+                ModelState.AddModelError("Username", "帳號尚未驗證");
                 return View(model);
             }
             await _authHelper.SignInUserAsync(user, model.RememberMe);
@@ -89,28 +89,28 @@ namespace Calligraphy.Controllers
             {
                 return View(model);
             }
-            if (await _context.TbExhUser.AnyAsync(u => u.Username == model.UserName))
+            if (await _context.TbExhUser.AnyAsync(u => u.Username == model.Username))
             {
-                ModelState.AddModelError("", "帳號已存在");
+                ModelState.AddModelError("Username", "帳號已存在");
                 return View(model);
             }
             var emaiToken = Guid.NewGuid().ToString();
             var user = new TbExhUser
             {
-                Username = model.UserName,
+                Username = model.Username,
                 PasswordHash = BCrypt.Net.BCrypt.HashPassword(model.Password),
                 Role = "Artist",//之後再想怎麼改成不寫死
-                Creator = model.UserName,
+                Creator = model.Username,
                 CreateFrom = _httpContextAccessor.HttpContext?.Connection.RemoteIpAddress?.ToString(),
                 MailConfirmcode = emaiToken,
                 MailConfirmdate = DateTime.UtcNow.AddDays(1),
             };
             _context.TbExhUser.Add(user);
             //建立驗證連結
-            var confirmLink = Url.Action("ConfirmEmail", "Admin", new { token = emaiToken, email = model.UserName }, Request.Scheme);
+            var confirmLink = Url.Action("ConfirmEmail", "Admin", new { token = emaiToken, email = model.Username }, Request.Scheme);
             try
             {
-                await _emailService.SendAsync(model.UserName, "RuoliCalligraphy驗證信", $@"
+                await _emailService.SendAsync(model.Username, "RuoliCalligraphy驗證信", $@"
                                                                                         <p>親愛的使用者您好，</p>
                                                                                         <p>請點擊以下連結以完成帳號驗證：</p>
                                                                                         <p><a href=""{confirmLink}"">{confirmLink}</a></p>
@@ -131,9 +131,10 @@ namespace Calligraphy.Controllers
         /// <param name="email"></param>
         /// <returns></returns>
         [AllowAnonymous]
-        public IActionResult RegisterRemind(string email)
+        public IActionResult RegisterRemind(string email, bool check)
         {
             ViewBag.Email = email;
+            ViewBag.Check = check;
             return View();
         }
 
@@ -146,6 +147,7 @@ namespace Calligraphy.Controllers
         [HttpPost]
         public async Task<IActionResult> ResendConfirmEmail(string email)
         {
+            bool check = false;
             var user = await _context.TbExhUser
                 .FirstOrDefaultAsync(u => u.Username == email);
             if (user == null)
@@ -170,13 +172,14 @@ namespace Calligraphy.Controllers
                                                                                         <p>請點擊以下連結以完成帳號驗證：</p>
                                                                                         <p><a href=""{confirmLink}"">{confirmLink}</a></p>
                                                                                         <p>此連結將於 24 小時內失效。</p>");
+                check = true;
             }
             catch (TaskCanceledException)
             {
                 _logger.LogError("Email sending timed out.");
             }
             await _context.SaveChangesAsync();
-            return RedirectToAction("RegisterRemind", "Admin", new { email = user.Username });
+            return RedirectToAction("RegisterRemind", "Admin", new { email = user.Username, check });
         }
 
         /// <summary>

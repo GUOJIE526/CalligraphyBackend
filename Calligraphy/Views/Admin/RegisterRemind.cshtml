@@ -95,3 +95,10 @@
         </button>
     </form>
 </div>
+
+<script type="text/javascript">
+    var check = "@(ViewBag.Check?.ToString().ToLower())"
+    if(check == "true"){
+        alert("驗證信已送出。");
+    }
+</script>
