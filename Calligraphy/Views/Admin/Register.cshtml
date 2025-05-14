@@ -14,17 +14,22 @@
         <div class="card-body">
             <form asp-action="Register" method="post">
                 <div class="form-group">
-                    <label asp-for="Username">Email:</label>
+                    <label asp-for="Username">信箱:</label>
                     <input asp-for="Username" class="form-control" id="email" type="email">
                     <span class="mb-2">@Html.ValidationMessageFor(model => model.Username, "", new { @class = "text-danger" })</span>
                 </div>
                 <div class="form-group">
-                    <label asp-for="Password">Password:</label>
+                    <label asp-for="Name">姓名:</label>
+                    <input asp-for="Name" class="form-control" type="text">
+                    <span class="mb-2">@Html.ValidationMessageFor(model => model.Name, "", new { @class = "text-danger" })</span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="Password">密碼:</label>
                     <input asp-for="Password" class="form-control" id="password" type="password">
                     <span class="mb-2"></span>@Html.ValidationMessageFor(model => model.Password, "", new { @class = "text-danger" })
                 </div>
                 <div class="form-group">
-                    <label asp-for="ConfirmPassword">Confirm Password:</label>
+                    <label asp-for="ConfirmPassword">確認密碼:</label>
                     <input asp-for="ConfirmPassword" class="form-control" id="confirm-password" type="password">
                     <span class="mb-2"></span>@Html.ValidationMessageFor(model => model.ConfirmPassword, "", new { @class = "text-danger" })
                 </div>

@@ -11,7 +11,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Calligraphy.Controllers
 {
-    [Authorize(AuthenticationSchemes = "AdminCookie", Roles = "Admin,Artist")]
+    [Authorize(AuthenticationSchemes = "AdminCookie, ArtistCookie", Roles = "Admin,Artist")]
     public class AdminController : Controller
     {
         private readonly CalligraphyContext _context;
@@ -61,7 +61,7 @@ namespace Calligraphy.Controllers
             }
             if (user.MailConfirm == false)
             {
-                ModelState.AddModelError("Username", "帳號尚未驗證");
+                ModelState.AddModelError("Username", "帳號尚未啟用");
                 return View(model);
             }
             await _authHelper.SignInUserAsync(user, model.RememberMe);
@@ -94,10 +94,19 @@ namespace Calligraphy.Controllers
                 ModelState.AddModelError("Username", "帳號已存在");
                 return View(model);
             }
-            var emaiToken = Guid.NewGuid().ToString();
+            if (string.IsNullOrEmpty(model.Name))
+            {
+                ModelState.AddModelError("Name", "請輸入大名");
+            }
+            if (model.Name == "Admin" || model.Name == "Administrator" || model.Name == "admin" || model.Name == "administrator")
+            {
+                ModelState.AddModelError("Name", "姓名含有系統保留字");
+            }
+            string emaiToken = Guid.NewGuid().ToString();
             var user = new TbExhUser
             {
                 Username = model.Username,
+                DisplayName = model.Name,
                 PasswordHash = BCrypt.Net.BCrypt.HashPassword(model.Password),
                 Role = "Artist",//之後再想怎麼改成不寫死
                 Creator = model.Username,
@@ -121,7 +130,6 @@ namespace Calligraphy.Controllers
                 _logger.LogError("Email sending timed out.");
             }
             await _context.SaveChangesAsync();
-            //await _authHelper.SignInUserAsync(user, true);
             return RedirectToAction("RegisterRemind", "Admin", new {email = user.Username});
         }
 
@@ -129,6 +137,7 @@ namespace Calligraphy.Controllers
         /// 註冊後的提醒頁面
         /// </summary>
         /// <param name="email"></param>
+        /// <param name="check"></param>
         /// <returns></returns>
         [AllowAnonymous]
         public IActionResult RegisterRemind(string email, bool check)
@@ -245,8 +254,8 @@ namespace Calligraphy.Controllers
                 return View();
             }
             var resetToken = Guid.NewGuid().ToString();
-            user.MailConfirmcode = resetToken;
-            user.MailConfirmdate = DateTime.UtcNow.AddDays(1);
+            user.RestpwdToken = resetToken;
+            user.RestpwdLimitdate = DateTime.UtcNow.AddDays(1);
             //建立驗證連結
             var resetLink = Url.Action("ResetPassword", "Admin", new { token = resetToken, email = user.Username }, Request.Scheme);
             try
@@ -267,13 +276,55 @@ namespace Calligraphy.Controllers
         }
 
         /// <summary>
+        /// 重設密碼頁面
+        /// </summary>
+        /// <returns></returns>
+        [AllowAnonymous]
+        public IActionResult ResetPassword()
+        {
+            bool check = false;
+            var user = _context.TbExhUser
+                .FirstOrDefault(u => u.RestpwdToken == Request.Query["token"].ToString() && u.Username == Request.Query["email"].ToString());
+            if (user != null)
+                ViewBag.Name = user.DisplayName;
+            if (user!.RestpwdLimitdate < DateTime.UtcNow)
+            {
+                check = true;
+                ViewBag.ErrorMessage = "連結已失效";
+                ViewBag.Check = check;
+            }
+            return View();
+        }
+
+        [AllowAnonymous]
+        [HttpPost]
+        public async Task<IActionResult> ResetPassword(ResetPwdViewModel model)
+        {
+            var user = await _context.TbExhUser
+                .FirstOrDefaultAsync(u => u.MailConfirmcode == model.Token && u.Username == model.Email);
+            if (user == null || user.MailConfirmdate < DateTime.UtcNow)
+            {
+                ModelState.AddModelError("email", "連結已失效或使用者不存在");
+                return View();
+            }
+            if (model.Password != model.ConfirmPassword)
+            {
+                ModelState.AddModelError("ConfirmPassword", "密碼不一致");
+                return View();
+            }
+            user.PasswordHash = BCrypt.Net.BCrypt.HashPassword(model.Password);
+            await _context.SaveChangesAsync();
+            return RedirectToAction("Login", "Admin");
+        }
+
+        /// <summary>
         /// 登出
         /// </summary>
         /// <returns></returns>
         [AllowAnonymous]
         public async Task<IActionResult> Logout()
         {
-            await HttpContext.SignOutAsync("AdminCookie");
+            await _authHelper.SignOutUserAsync();
             return View("Login");
         }
     }

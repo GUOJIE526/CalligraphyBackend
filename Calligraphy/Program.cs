@@ -2,6 +2,7 @@ using Calligraphy.Data;
 using Calligraphy.Models;
 using Calligraphy.Services;
 using Calligraphy.Services.Interfaces;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
@@ -25,13 +26,19 @@ builder.Services.AddHttpContextAccessor();
 builder.Services.AddScoped<AuthHelper>();
 builder.Services.AddScoped<IEmailService, SmtpEmailService>();
 //ÅçÃÒµn¤Jcookie
-builder.Services.AddAuthentication("AdminCookie").AddCookie("AdminCookie", options =>
-{
-    options.LoginPath = "/Admin/Login";
-    options.AccessDeniedPath = "/Admin/Login";
-    options.ExpireTimeSpan = TimeSpan.FromMinutes(30);
-    options.SlidingExpiration = true;
-});
+builder.Services.AddAuthentication()
+    .AddCookie("AdminCookie", options =>
+    {
+        options.LoginPath = "/Admin/Login";
+        options.SlidingExpiration = true;
+        options.AccessDeniedPath = "/Admin/Login";
+    })
+    .AddCookie("ArtistCookie", options =>
+    {
+        options.LoginPath = "/Admin/Login";
+        options.SlidingExpiration = true;
+        options.AccessDeniedPath = "/Admin/Login";
+    });
 
 var app = builder.Build();
 

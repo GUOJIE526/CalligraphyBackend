@@ -33,7 +33,11 @@ public partial class TbExhUser
 
     public string? MailConfirmcode { get; set; }
 
-    public DateTime MailConfirmdate { get; set; }
+    public DateTime? MailConfirmdate { get; set; }
+
+    public string? RestpwdToken { get; set; }
+
+    public DateTime? RestpwdLimitdate { get; set; }
 
     public virtual ICollection<TbExhLog> TbExhLog { get; set; } = new List<TbExhLog>();
 }

@@ -274,6 +274,12 @@ public partial class CalligraphyContext : DbContext
             entity.Property(e => e.PasswordHash)
                 .HasMaxLength(255)
                 .HasColumnName("PASSWORD_HASH");
+            entity.Property(e => e.RestpwdLimitdate)
+                .HasColumnType("datetime")
+                .HasColumnName("RESTPWD_LIMITDATE");
+            entity.Property(e => e.RestpwdToken)
+                .HasMaxLength(50)
+                .HasColumnName("RESTPWD_TOKEN");
             entity.Property(e => e.Role)
                 .HasMaxLength(50)
                 .HasColumnName("ROLE");
