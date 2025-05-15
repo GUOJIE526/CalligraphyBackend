@@ -29,15 +29,15 @@ builder.Services.AddScoped<IEmailService, SmtpEmailService>();
 builder.Services.AddAuthentication()
     .AddCookie("AdminCookie", options =>
     {
-        options.LoginPath = "/Admin/Login";
+        options.LoginPath = "/SignUp/Login";
         options.SlidingExpiration = true;
-        options.AccessDeniedPath = "/Admin/Login";
+        options.AccessDeniedPath = "/SignUp/Login";
     })
     .AddCookie("ArtistCookie", options =>
     {
-        options.LoginPath = "/Admin/Login";
+        options.LoginPath = "/SignUp/Login";
         options.SlidingExpiration = true;
-        options.AccessDeniedPath = "/Admin/Login";
+        options.AccessDeniedPath = "/SignUp/Login";
     });
 
 var app = builder.Build();

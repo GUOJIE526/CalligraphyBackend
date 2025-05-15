@@ -11,15 +11,14 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Calligraphy.Controllers
 {
-    [Authorize(AuthenticationSchemes = "AdminCookie, ArtistCookie", Roles = "Admin,Artist")]
-    public class AdminController : Controller
+    public class SignUpController : Controller
     {
         private readonly CalligraphyContext _context;
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly AuthHelper _authHelper;
         private readonly IEmailService _emailService;
-        private readonly ILogger<AdminController> _logger;
-        public AdminController(CalligraphyContext context, IHttpContextAccessor contextAccessor, AuthHelper authHelper, IEmailService emailService, ILogger<AdminController> logger)
+        private readonly ILogger<SignUpController> _logger;
+        public SignUpController(CalligraphyContext context, IHttpContextAccessor contextAccessor, AuthHelper authHelper, IEmailService emailService, ILogger<SignUpController> logger)
         {
             _context = context;
             _httpContextAccessor = contextAccessor;
@@ -32,7 +31,6 @@ namespace Calligraphy.Controllers
         /// 登入頁面
         /// </summary>
         /// <returns></returns>
-        [AllowAnonymous]
         [HttpGet]
         public IActionResult Login()
         {
@@ -44,7 +42,6 @@ namespace Calligraphy.Controllers
         /// </summary>
         /// <param name="model"></param>
         /// <returns></returns>
-        [AllowAnonymous]
         [HttpPost]
         public async Task<IActionResult> Login(LoginViewModel model)
         {
@@ -72,7 +69,6 @@ namespace Calligraphy.Controllers
         /// 註冊頁面
         /// </summary>
         /// <returns></returns>
-        [AllowAnonymous]
         [HttpGet]
         public IActionResult Register() => View();
 
@@ -81,7 +77,6 @@ namespace Calligraphy.Controllers
         /// </summary>
         /// <param name="model"></param>
         /// <returns></returns>
-        [AllowAnonymous]
         [HttpPost]
         public async Task<IActionResult> Register(RegisterViewModel model)
         {
@@ -97,10 +92,12 @@ namespace Calligraphy.Controllers
             if (string.IsNullOrEmpty(model.Name))
             {
                 ModelState.AddModelError("Name", "請輸入大名");
+                return View(model);
             }
             if (model.Name == "Admin" || model.Name == "Administrator" || model.Name == "admin" || model.Name == "administrator")
             {
                 ModelState.AddModelError("Name", "姓名含有系統保留字");
+                return View(model);
             }
             string emaiToken = Guid.NewGuid().ToString();
             var user = new TbExhUser
@@ -116,7 +113,7 @@ namespace Calligraphy.Controllers
             };
             _context.TbExhUser.Add(user);
             //建立驗證連結
-            var confirmLink = Url.Action("ConfirmEmail", "Admin", new { token = emaiToken, email = model.Username }, Request.Scheme);
+            var confirmLink = Url.Action("ConfirmEmail", "SignUp", new { token = emaiToken, email = model.Username }, Request.Scheme);
             try
             {
                 await _emailService.SendAsync(model.Username, "RuoliCalligraphy驗證信", $@"
@@ -130,7 +127,7 @@ namespace Calligraphy.Controllers
                 _logger.LogError("Email sending timed out.");
             }
             await _context.SaveChangesAsync();
-            return RedirectToAction("RegisterRemind", "Admin", new {email = user.Username});
+            return RedirectToAction("RegisterRemind", "SignUp", new {email = user.Username});
         }
 
         /// <summary>
@@ -139,7 +136,6 @@ namespace Calligraphy.Controllers
         /// <param name="email"></param>
         /// <param name="check"></param>
         /// <returns></returns>
-        [AllowAnonymous]
         public IActionResult RegisterRemind(string email, bool check)
         {
             ViewBag.Email = email;
@@ -152,7 +148,6 @@ namespace Calligraphy.Controllers
         /// </summary>
         /// <param name="email"></param>
         /// <returns></returns>
-        [AllowAnonymous]
         [HttpPost]
         public async Task<IActionResult> ResendConfirmEmail(string email)
         {
@@ -173,7 +168,7 @@ namespace Calligraphy.Controllers
             user.MailConfirmcode = Guid.NewGuid().ToString();
             user.MailConfirmdate = DateTime.UtcNow.AddDays(1);
             //建立驗證連結
-            var confirmLink = Url.Action("ConfirmEmail", "Admin", new { token = user.MailConfirmcode, email = user.Username }, Request.Scheme);
+            var confirmLink = Url.Action("ConfirmEmail", "SignUp", new { token = user.MailConfirmcode, email = user.Username }, Request.Scheme);
             try
             {
                 await _emailService.SendAsync(user.Username, "RuoliCalligraphy驗證信", $@"
@@ -188,7 +183,7 @@ namespace Calligraphy.Controllers
                 _logger.LogError("Email sending timed out.");
             }
             await _context.SaveChangesAsync();
-            return RedirectToAction("RegisterRemind", "Admin", new { email = user.Username, check });
+            return RedirectToAction("RegisterRemind", "SignUp", new { email = user.Username, check });
         }
 
         /// <summary>
@@ -197,8 +192,6 @@ namespace Calligraphy.Controllers
         /// <param name="token"></param>
         /// <param name="email"></param>
         /// <returns></returns>
-
-        [AllowAnonymous]
         public async Task<IActionResult> ConfirmEmail(string token, string email)
         {
             var user = await _context.TbExhUser
@@ -210,14 +203,13 @@ namespace Calligraphy.Controllers
             user.MailConfirm = true;
             await _context.SaveChangesAsync();
             await _authHelper.SignInUserAsync(user, true);
-            return RedirectToAction("MailConfirmWelcome", "Admin");
+            return RedirectToAction("MailConfirmWelcome", "SignUp");
         }
 
         /// <summary>
         /// 註冊成功後的歡迎頁面
         /// </summary>
         /// <returns></returns>
-        [AllowAnonymous]
         public IActionResult MailConfirmWelcome() => View();
 
         /// <summary>
@@ -225,7 +217,6 @@ namespace Calligraphy.Controllers
         /// </summary>
         /// <param name="check"></param>
         /// <returns></returns>
-        [AllowAnonymous]
         public IActionResult ForgotPassword(bool check)
         {
             if (check)
@@ -241,7 +232,6 @@ namespace Calligraphy.Controllers
         /// </summary>
         /// <param name="email"></param>
         /// <returns></returns>
-        [AllowAnonymous]
         [HttpPost]
         public async Task<IActionResult> ForgotPassword(string email)
         {
@@ -257,7 +247,7 @@ namespace Calligraphy.Controllers
             user.RestpwdToken = resetToken;
             user.RestpwdLimitdate = DateTime.UtcNow.AddDays(1);
             //建立驗證連結
-            var resetLink = Url.Action("ResetPassword", "Admin", new { token = resetToken, email = user.Username }, Request.Scheme);
+            var resetLink = Url.Action("ResetPassword", "SignUp", new { token = resetToken, email = user.Username }, Request.Scheme);
             try
             {
                 await _emailService.SendAsync(user.Username, "RuoliCalligraphy密碼重設信", $@"
@@ -272,14 +262,13 @@ namespace Calligraphy.Controllers
                 _logger.LogError("Email sending timed out.");
             }
             await _context.SaveChangesAsync();
-            return RedirectToAction("ForgotPassword", "Admin", new { check });
+            return RedirectToAction("ForgotPassword", "SignUp", new { check });
         }
 
         /// <summary>
         /// 重設密碼頁面
         /// </summary>
         /// <returns></returns>
-        [AllowAnonymous]
         public IActionResult ResetPassword()
         {
             bool check = false;
@@ -296,7 +285,6 @@ namespace Calligraphy.Controllers
             return View();
         }
 
-        [AllowAnonymous]
         [HttpPost]
         public async Task<IActionResult> ResetPassword(ResetPwdViewModel model)
         {
@@ -314,14 +302,13 @@ namespace Calligraphy.Controllers
             }
             user.PasswordHash = BCrypt.Net.BCrypt.HashPassword(model.Password);
             await _context.SaveChangesAsync();
-            return RedirectToAction("Login", "Admin");
+            return RedirectToAction("Login", "SignUp");
         }
 
         /// <summary>
         /// 登出
         /// </summary>
         /// <returns></returns>
-        [AllowAnonymous]
         public async Task<IActionResult> Logout()
         {
             await _authHelper.SignOutUserAsync();

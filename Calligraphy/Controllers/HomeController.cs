@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Calligraphy.Controllers
 {
-    [Authorize(AuthenticationSchemes = "AdminCookie")]
+    [Authorize(AuthenticationSchemes = "AdminCookie, ArtistCookie", Roles = "Admin,Artist")]
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;

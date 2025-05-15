@@ -1,0 +1,80 @@
+﻿@using Calligraphy.ViewModel
+@model RegisterViewModel
+@{
+    Layout = null;
+}
+<!-- From Uiverse.io by Yaya12085 -->
+<!-- From Uiverse.io by ahmed150up -->
+<head>
+    <link href="~/css/register.css" rel="stylesheet" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+</head>
+<body>
+    <div class="card">
+        <div class="card-header">
+            <div class="text-header">註冊</div>
+        </div>
+        <div class="card-body">
+            <form asp-action="Register" method="post">
+                <div class="form-group">
+                    <label asp-for="Username">信箱:</label>
+                    <input asp-for="Username" class="form-control" id="email" type="email">
+                    <span class="mb-2">@Html.ValidationMessageFor(model => model.Username, "", new { @class = "text-danger" })</span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="Name">姓名:</label>
+                    <input asp-for="Name" class="form-control" type="text">
+                    <span class="mb-2">@Html.ValidationMessageFor(model => model.Name, "", new { @class = "text-danger" })</span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="Password">密碼:</label>
+                    <input asp-for="Password" class="form-control" id="password" type="password">
+                    <span class="mb-2"></span>@Html.ValidationMessageFor(model => model.Password, "", new { @class = "text-danger" })
+                </div>
+                <div class="form-group">
+                    <label asp-for="ConfirmPassword">確認密碼:</label>
+                    <input asp-for="ConfirmPassword" class="form-control" id="confirm-password" type="password">
+                    <span class="mb-2"></span>@Html.ValidationMessageFor(model => model.ConfirmPassword, "", new { @class = "text-danger" })
+                </div>
+                <div class="eyes">
+                    <svg class="eye" width="20px" height="20px" data-name="Layer 1" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M10.94,6.08A6.93,6.93,0,0,1,12,6c3.18,0,6.17,2.29,7.91,6a15.23,15.23,0,0,1-.9,1.64,1,1,0,0,0-.16.55,1,1,0,0,0,1.86.5,15.77,15.77,0,0,0,1.21-2.3,1,1,0,0,0,0-.79C19.9,6.91,16.1,4,12,4a7.77,7.77,0,0,0-1.4.12,1,1,0,1,0,.34,2ZM3.71,2.29A1,1,0,0,0,2.29,3.71L5.39,6.8a14.62,14.62,0,0,0-3.31,4.8,1,1,0,0,0,0,.8C4.1,17.09,7.9,20,12,20a9.26,9.26,0,0,0,5.05-1.54l3.24,3.25a1,1,0,0,0,1.42,0,1,1,0,0,0,0-1.42Zm6.36,9.19,2.45,2.45A1.81,1.81,0,0,1,12,14a2,2,0,0,1-2-2A1.81,1.81,0,0,1,10.07,11.48ZM12,18c-3.18,0-6.17-2.29-7.9-6A12.09,12.09,0,0,1,6.8,8.21L8.57,10A4,4,0,0,0,14,15.43L15.59,17A7.24,7.24,0,0,1,12,18Z" fill="#6563ff" />
+                    </svg>
+                    <svg class="eye" style="display: none" width="20px" height="20px" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M21.92,11.6C19.9,6.91,16.1,4,12,4S4.1,6.91,2.08,11.6a1,1,0,0,0,0,.8C4.1,17.09,7.9,20,12,20s7.9-2.91,9.92-7.6A1,1,0,0,0,21.92,11.6ZM12,18c-3.17,0-6.17-2.29-7.9-6C5.83,8.29,8.83,6,12,6s6.17,2.29,7.9,6C18.17,15.71,15.17,18,12,18ZM12,8a4,4,0,1,0,4,4A4,4,0,0,0,12,8Zm0,6a2,2,0,1,1,2-2A2,2,0,0,1,12,14Z" fill="#6563ff" />
+                    </svg>
+                </div>
+                <input type="submit" class="btn" value="送出">
+            </form>
+            <div class="box">
+                <a href="@Url.Action("Login", "SignUp")">已有帳號嗎? 現在馬上登入</a>
+            </div>
+        </div>
+    </div>
+</body>
+<script type="text/javascript">
+    //點眼睛改變password屬性
+    const password = document.getElementById("password");
+    const confirmPassword = document.getElementById("confirm-password");
+    const eye = document.querySelectorAll(".eye");
+
+    function ChangeEye(){
+        if (password.type === "password") {
+            password.type = "text";
+            confirmPassword.type = "text";
+            eye[0].style.display = "none";
+            eye[1].style.display = "block";
+        } else {
+            password.type = "password";
+            confirmPassword.type = "password";
+            eye[0].style.display = "block";
+            eye[1].style.display = "none";
+        }
+    }
+    eye[0].addEventListener("click", function () {
+        ChangeEye();
+    });
+    eye[1].addEventListener("click", function () {
+        ChangeEye();
+    });
+</script>
