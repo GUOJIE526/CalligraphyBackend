@@ -239,7 +239,7 @@ public partial class CalligraphyContext : DbContext
 
             entity.ToTable("TB_EXH_USER");
 
-            entity.HasIndex(e => e.Username, "UQ__TB_EXH_U__B15BE12E7166DFEC").IsUnique();
+            entity.HasIndex(e => e.Email, "UQ__TB_EXH_U__B15BE12E7166DFEC").IsUnique();
 
             entity.Property(e => e.UserId)
                 .HasDefaultValueSql("(newid())")
@@ -254,6 +254,9 @@ public partial class CalligraphyContext : DbContext
             entity.Property(e => e.DisplayName)
                 .HasMaxLength(100)
                 .HasColumnName("DISPLAY_NAME");
+            entity.Property(e => e.Email)
+                .HasMaxLength(100)
+                .HasColumnName("EMAIL");
             entity.Property(e => e.IsActive)
                 .HasDefaultValue(true)
                 .HasColumnName("IS_ACTIVE");
@@ -274,6 +277,7 @@ public partial class CalligraphyContext : DbContext
             entity.Property(e => e.PasswordHash)
                 .HasMaxLength(255)
                 .HasColumnName("PASSWORD_HASH");
+            entity.Property(e => e.RestpwdConfirm).HasColumnName("RESTPWD_CONFIRM");
             entity.Property(e => e.RestpwdLimitdate)
                 .HasColumnType("datetime")
                 .HasColumnName("RESTPWD_LIMITDATE");
@@ -283,9 +287,6 @@ public partial class CalligraphyContext : DbContext
             entity.Property(e => e.Role)
                 .HasMaxLength(50)
                 .HasColumnName("ROLE");
-            entity.Property(e => e.Username)
-                .HasMaxLength(100)
-                .HasColumnName("USERNAME");
         });
 
         OnModelCreatingPartial(modelBuilder);

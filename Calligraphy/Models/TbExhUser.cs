@@ -7,11 +7,11 @@ public partial class TbExhUser
 {
     public Guid UserId { get; set; }
 
-    public string Username { get; set; } = null!;
+    public string Email { get; set; } = null!;
 
     public string PasswordHash { get; set; } = null!;
 
-    public string? DisplayName { get; set; }
+    public string DisplayName { get; set; } = null!;
 
     public string Role { get; set; } = null!;
 
@@ -38,6 +38,8 @@ public partial class TbExhUser
     public string? RestpwdToken { get; set; }
 
     public DateTime? RestpwdLimitdate { get; set; }
+
+    public bool RestpwdConfirm { get; set; }
 
     public virtual ICollection<TbExhLog> TbExhLog { get; set; } = new List<TbExhLog>();
 }

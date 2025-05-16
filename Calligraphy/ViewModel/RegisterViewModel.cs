@@ -6,7 +6,7 @@ namespace Calligraphy.ViewModel
     {
         [Required(ErrorMessage = "請輸入Email!!")]
         [EmailAddress(ErrorMessage = "請輸入正確的Email格式!!")]
-        public string Username { get; set; } = null!;
+        public string Email { get; set; } = null!;
 
         [Required(ErrorMessage = "請輸入大名!!")]
         public string Name { get; set; } = null!;

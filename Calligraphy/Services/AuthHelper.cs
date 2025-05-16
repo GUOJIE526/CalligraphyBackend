@@ -19,8 +19,8 @@ namespace Calligraphy.Services
         {
             var claims = new List<Claim>
             {
-                new Claim(ClaimTypes.Name, exhUser.Username),
-                new Claim(ClaimTypes.Role, exhUser.Role),
+                new Claim(ClaimTypes.Name, exhUser.DisplayName),
+                new Claim(ClaimTypes.Role, exhUser.Role)
             };
             //如果role是artist，則使用artist cookie
             string scheme = exhUser.Role == "artist" ? artist : administrator;

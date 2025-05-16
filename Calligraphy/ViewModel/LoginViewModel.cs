@@ -5,7 +5,7 @@ namespace Calligraphy.ViewModel
     public class LoginViewModel
     {
         [Required(ErrorMessage = "請輸入帳號!")]
-        [Display(Name = "信箱")]
+        [Display(Name = "使用者名稱")]
         public string Username { get; set; } = null!;
 
         [Required(ErrorMessage = "請輸入密碼!")]
