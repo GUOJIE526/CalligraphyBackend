@@ -1,0 +1,86 @@
+﻿@using Calligraphy.ViewModel
+@model IEnumerable<Calligraphy.ViewModel.DashboardViewModel>
+@section Styles {
+    <link href="~/assets/css/styles.min.css" rel="stylesheet" />
+}
+
+<div class="text-center">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-body">
+                <div class="d-md-flex align-items-center">
+                    <div>
+                        <h4 class="card-title">最新留言</h4>
+                    </div>
+                </div>
+                <div class="table-responsive mt-4">
+                    <table class="table mb-0 text-nowrap varient-table align-middle fs-3">
+                        <thead>
+                            <tr>
+                                <th scope="col" class="px-0 text-muted">
+                                    @Html.DisplayNameFor(model => model.ArtTitle)
+                                </th>
+                                <th scope="col" class="px-0 text-muted">
+                                    @Html.DisplayNameFor(model => model.Comment)
+                                </th>
+                                <th scope="col" class="px-0 text-muted">
+                                    @Html.DisplayNameFor(model => model.Reply)
+                                </th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var item in Model)
+                            {
+                                <tr>
+                                    <td class="px-0">
+                                        <div class="d-flex align-items-center">
+                                            <div class="ms-3">
+                                                <h6 class="mb-0 fw-bolder">
+                                                    @Html.DisplayFor(modelItem => item.ArtTitle)
+                                                </h6>
+                                            </div>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="px-0">
+                                        <div class="d-flex align-items-center">
+                                            <div class="ms-3">
+                                                <h6 class="mb-0 fw-bolder">
+                                                    @Html.DisplayFor(modelItem => item.Comment)
+                                                </h6>
+                                            </div>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="px-0">
+                                        <div class="d-flex align-items-center">
+                                            <div class="ms-3">
+                                                <h6 class="mb-0 fw-bolder">
+                                                    @Html.DisplayFor(modelItem => item.Reply)
+                                                </h6>
+                                            </div>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="px-0">
+                                        <div class="d-flex align-items-center">
+                                            <div class="ms-3">
+                                                <h6 class="mb-0 fw-bolder">
+                                                    <a href="#">回覆留言</a>
+                                                </h6>
+                                            </div>
+                                        </div>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

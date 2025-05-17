@@ -96,7 +96,6 @@ public partial class CalligraphyContext : DbContext
             entity.Property(e => e.Creator)
                 .HasMaxLength(50)
                 .HasColumnName("CREATOR");
-            entity.Property(e => e.IsApproved).HasColumnName("IS_APPROVED");
             entity.Property(e => e.Message)
                 .HasMaxLength(500)
                 .HasColumnName("MESSAGE");
@@ -107,6 +106,10 @@ public partial class CalligraphyContext : DbContext
             entity.Property(e => e.ModifyFrom)
                 .HasMaxLength(50)
                 .HasColumnName("MODIFY_FROM");
+            entity.Property(e => e.Reply)
+                .HasMaxLength(500)
+                .HasColumnName("REPLY");
+            entity.Property(e => e.ReplyTime).HasColumnName("REPLY_TIME");
             entity.Property(e => e.UserName)
                 .HasMaxLength(100)
                 .HasColumnName("USER_NAME");

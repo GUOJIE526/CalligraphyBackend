@@ -14,17 +14,20 @@
         <aside class="left-sidebar">
             <!-- Sidebar scroll-->
             <div>
-                <div class="brand-logo d-flex align-items-center justify-content-center">
-                    <a asp-area="" asp-controller="Home" asp-action="Index" class="text-nowrap logo-img mt-3">
+                <div class="brand-logo d-flex align-items-center justify-content-between">
+                    <a asp-area="" asp-controller="Home" asp-action="Dashboard" class="text-nowrap logo-img mt-3">
                         <img src="~/pic/signature.jpg" alt="logo" />
                     </a>
+                    <div class="close-btn d-xl-none d-block sidebartoggler cursor-pointer" id="sidebarCollapse">
+                        <i class="ti ti-x fs-6"></i>
+                    </div>
                 </div>
                 <hr />
                 <!-- Sidebar navigation-->
                 <nav class="sidebar-nav scroll-sidebar" data-simplebar="">
                     <ul id="sidebarnav">
                         <li class="sidebar-item">
-                            <a class="sidebar-link" asp-area="" asp-controller="Home" asp-action="Index" aria-expanded="false">
+                            <a class="sidebar-link" asp-area="" asp-controller="Home" asp-action="Dashboard" aria-expanded="false">
                                 <i class="ti ti-atom"></i>
                                 <span class="hide-menu">主頁</span>
                             </a>
@@ -110,51 +113,11 @@
             </div>
         </div>
     </div>
-    <footer class="border-top footer text-muted">
-        <div class="container">
+    <footer class="py-6 px-6 text-center">
+        <div class="mb-0 fs-4">
             &copy; @DateTime.Now.Year - Calligraphy - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
         </div>
     </footer>
-
-
-@*     <div class="container-fluid d-flex">
-        <header>
-            <nav class="d-flex flex-column flex-shrink-0 p-3 bg-light" style="width: 280px;height:auto">
-                <a asp-area="" asp-controller="Home" asp-action="Index" class="d-flex align-items-center mb-3 mb-md-0 me-md-auto link-dark text-decoration-none">
-                    <img src="~/pic/signature.jpg" alt="logo" />
-                </a>
-                <hr>
-                <ul class="nav nav-pills flex-column mb-auto">
-                    <li class="nav-item">
-                        <a href="#" class="nav-link active" aria-current="page">
-                            <svg class="bi me-2" width="16" height="16"><use xlink:href="#home"></use></svg>
-                            Home
-                        </a>
-                    </li>
-                </ul>
-                <hr>
-                <div class="dropdown">
-                    <a href="#" class="d-flex align-items-center link-dark text-decoration-none dropdown-toggle" id="dropdownUser2" data-bs-toggle="dropdown" aria-expanded="false">
-                        <img src="https://github.com/mdo.png" alt="" width="32" height="32" class="rounded-circle me-2">
-                        <strong>mdo</strong>
-                    </a>
-                    <ul class="dropdown-menu text-small shadow" aria-labelledby="dropdownUser2">
-                        <li><a class="dropdown-item" href="#">Settings</a></li>
-                        <li><a class="dropdown-item" href="#">Sign out</a></li>
-                    </ul>
-                </div>
-            </nav>
-        </header>
-        <main role="main" class="pb-3 flex-grow-1">
-            @RenderBody()
-        </main>
-    </div>
-    <footer class="border-top footer text-muted">
-        <div class="container">
-            &copy; @DateTime.Now.Year - Calligraphy - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
-        </div>
-    </footer>
- *@
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/assets/js/sidebarmenu.js" asp-append-version="true"></script>

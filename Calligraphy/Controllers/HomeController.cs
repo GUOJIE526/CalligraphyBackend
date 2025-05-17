@@ -1,7 +1,9 @@
 using System.Diagnostics;
 using Calligraphy.Models;
+using Calligraphy.ViewModel;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace Calligraphy.Controllers
 {
@@ -9,15 +11,31 @@ namespace Calligraphy.Controllers
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;
-
-        public HomeController(ILogger<HomeController> logger)
+        private readonly CalligraphyContext _context;
+        public HomeController(ILogger<HomeController> logger, CalligraphyContext context)
         {
             _logger = logger;
+            _context = context;
         }
 
         public IActionResult Index()
         {
             return View();
+        }
+
+        public IActionResult Dashboard()
+        {
+            //TbExhArtwork, TbExhComment關聯帶出List
+            var dashboardData = _context.TbExhArtwork
+                .AsNoTracking()
+                .Where(d => d.IsVisible)
+                .Select(d => new DashboardViewModel
+                {
+                    ArtTitle = d.Title,
+                    Comment = d.TbExhComment.Select(c => c.Message!).ToList(),
+                    Reply = d.TbExhComment.Select(c => c.Reply).ToList(),
+                }).ToList();
+            return View(dashboardData);
         }
 
         public IActionResult Privacy()

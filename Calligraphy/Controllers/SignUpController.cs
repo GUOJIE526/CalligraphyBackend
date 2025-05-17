@@ -62,7 +62,7 @@ namespace Calligraphy.Controllers
                 return View(model);
             }
             await _authHelper.SignInUserAsync(user, model.RememberMe);
-            return RedirectToAction("Index", "Home");
+            return RedirectToAction("Dashboard", "Home");
         }
 
         /// <summary>

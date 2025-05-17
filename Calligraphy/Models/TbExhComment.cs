@@ -9,11 +9,9 @@ public partial class TbExhComment
 
     public Guid ArtworkId { get; set; }
 
-    public string UserName { get; set; } = null!;
+    public string? UserName { get; set; }
 
-    public string Message { get; set; } = null!;
-
-    public bool IsApproved { get; set; }
+    public string? Message { get; set; }
 
     public DateTimeOffset CreateDate { get; set; }
 
@@ -26,6 +24,10 @@ public partial class TbExhComment
     public string? ModifyFrom { get; set; }
 
     public string? Modifier { get; set; }
+
+    public string? Reply { get; set; }
+
+    public DateTimeOffset? ReplyTime { get; set; }
 
     public virtual TbExhArtwork Artwork { get; set; } = null!;
 }
