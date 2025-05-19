@@ -42,7 +42,9 @@ public partial class CalligraphyContext : DbContext
             entity.Property(e => e.CreateFrom)
                 .HasMaxLength(50)
                 .HasColumnName("CREATE_FROM");
-            entity.Property(e => e.CreatedYear).HasColumnName("CREATED_YEAR");
+            entity.Property(e => e.CreatedYear)
+                .HasColumnType("datetime")
+                .HasColumnName("CREATED_YEAR");
             entity.Property(e => e.Creator)
                 .HasMaxLength(50)
                 .HasColumnName("CREATOR");

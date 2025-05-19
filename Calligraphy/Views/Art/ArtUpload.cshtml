@@ -1,0 +1,193 @@
+﻿@using Calligraphy.ViewModel
+@model ArtViewModel
+@{
+    ViewData["Title"] = "圖片上傳";
+}
+@section Styles{
+    <link href="~/css/artupload.css" rel="stylesheet" asp-append-version="true" />
+    <link href="~/assets/css/styles.min.css" rel="stylesheet" />
+}
+<!-- From Uiverse.io by Yaya12085 -->
+<form class="d-flex justify-content-center" enctype="multipart/form-data" asp-action="ArtUpload" method="post">
+    <div class="container">
+        <!-- From Uiverse.io by Yaya12085 -->
+        <label class="custum-file-upload" asp-for="File">
+            <div class="icon">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="" viewBox="0 0 24 24"><g stroke-width="0" id="SVGRepo_bgCarrier"></g><g stroke-linejoin="round" stroke-linecap="round" id="SVGRepo_tracerCarrier"></g><g id="SVGRepo_iconCarrier"> <path fill="" d="M10 1C9.73478 1 9.48043 1.10536 9.29289 1.29289L3.29289 7.29289C3.10536 7.48043 3 7.73478 3 8V20C3 21.6569 4.34315 23 6 23H7C7.55228 23 8 22.5523 8 22C8 21.4477 7.55228 21 7 21H6C5.44772 21 5 20.5523 5 20V9H10C10.5523 9 11 8.55228 11 8V3H18C18.5523 3 19 3.44772 19 4V9C19 9.55228 19.4477 10 20 10C20.5523 10 21 9.55228 21 9V4C21 2.34315 19.6569 1 18 1H10ZM9 7H6.41421L9 4.41421V7ZM14 15.5C14 14.1193 15.1193 13 16.5 13C17.8807 13 19 14.1193 19 15.5V16V17H20C21.1046 17 22 17.8954 22 19C22 20.1046 21.1046 21 20 21H13C11.8954 21 11 20.1046 11 19C11 17.8954 11.8954 17 13 17H14V16V15.5ZM16.5 11C14.142 11 12.2076 12.8136 12.0156 15.122C10.2825 15.5606 9 17.1305 9 19C9 21.2091 10.7909 23 13 23H20C22.2091 23 24 21.2091 24 19C24 17.1305 22.7175 15.5606 20.9844 15.122C20.7924 12.8136 18.858 11 16.5 11Z" clip-rule="evenodd" fill-rule="evenodd"></path> </g></svg>
+            </div>
+            <div class="text">
+                <span>Click to upload image</span>
+            </div>
+            <input type="file" asp-for="File">
+            <span>@Html.ValidationMessageFor(model => model.File, "", new{ @class = "text-danger" })</span>
+        </label>
+        <!-- From Uiverse.io by vinodjangid07 -->
+        <div class="d-flex justify-content-center mt-2">
+            <div class="button delete me-3">
+                <svg viewBox="0 0 448 512" class="svgIcon"><path d="M135.2 17.7L128 32H32C14.3 32 0 46.3 0 64S14.3 96 32 96H416c17.7 0 32-14.3 32-32s-14.3-32-32-32H320l-7.2-14.3C307.4 6.8 296.3 0 284.2 0H163.8c-12.1 0-23.2 6.8-28.6 17.7zM416 128H32L53.2 467c1.6 25.3 22.6 45 47.9 45H346.9c25.3 0 46.3-19.7 47.9-45L416 128z"></path></svg>
+            </div>
+            <!-- From Uiverse.io by gharsh11032000 -->
+            <div class="magnifier" style="display:none;" data-bs-toggle="modal" data-bs-target="#pic">
+                <span class="span">🔎</span>
+            </div>
+        </div>
+        <!--圖片開窗-->
+        <div class="modal fade" id="pic" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered" role="document">
+                <div class="modal-content">
+                    <div class="modal-body picbody">
+                        
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="contain">
+        </div>
+        <div class="row d-flex justify-content-around mt-3">
+            <!-- From Uiverse.io by Maximinodotpy -->
+            <div class="row col-lg-5">
+                <div class="inputGroup">
+                    <input type="text" class="input" asp-for="Title" placeholder="作品名稱" autocomplete="off" />
+                    <span>@Html.ValidationMessageFor(model => model.Title, "", new { @class = "text-danger" })</span>
+                </div>
+                <div class="inputGroup">
+                    <textarea asp-for="Content" class="input" style="resize:none;" placeholder="作品簡介" id="content" name="content" rows="5" cols="30"></textarea>
+                </div>
+            </div>
+            <div class="row col-lg-5">
+                <div class="inputGroup">
+                    <input asp-for="Year" class="input" type="text" placeholder="創作日期 ex:@DateTime.Now.ToString("yyyy/MM/dd")" autocomplete="off" />
+                    <span>@Html.ValidationMessageFor(model => model.Year, "", new { @class = "text-danger" })</span>
+                </div>
+                <div class="inputGroup">
+                    <input asp-for="Style" class="input" type="text" placeholder="作品風格" autocomplete="off" />
+                </div>
+                <div class="inputGroup">
+                    <input asp-for="Material" class="input" type="text" placeholder="作品材質" autocomplete="off" />
+                </div>
+                <div class="inputGroup">
+                    <input asp-for="Size" class="input" type="text" placeholder="作品尺寸" autocomplete="off" />
+                </div>
+            </div>
+            <!-- From Uiverse.io by PriyanshuGupta28 -->
+            <div class="checkbox-wrapper d-flex justify-content-center">
+                <input asp-for="IsVisible" type="checkbox">
+                <label class="terms-label" asp-for="IsVisible">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 200 200" class="checkbox-svg">
+                        <mask fill="white" id="path-1-inside-1_476_5-37">
+                            <rect height="200" width="200"></rect>
+                        </mask>
+                        <rect mask="url(#path-1-inside-1_476_5-37)" stroke-width="40" class="checkbox-box" height="200" width="200"></rect>
+                        <path stroke-width="15" d="M52 111.018L76.9867 136L149 64" class="checkbox-tick"></path>
+                    </svg>
+                    <span class="label-text">是否顯示於前台?</span>
+                </label>
+            </div>
+            <!-- From Uiverse.io by vinodjangid07 -->
+            <div class="d-flex justify-content-end">
+                <button type="submit" class="submitBtn">
+                    送出
+                    <svg fill="white" viewBox="0 0 448 512" height="1em" class="arrow"><path d="M438.6 278.6c12.5-12.5 12.5-32.8 0-45.3l-160-160c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3L338.8 224 32 224c-17.7 0-32 14.3-32 32s14.3 32 32 32l306.7 0L233.4 393.4c-12.5 12.5-12.5 32.8 0 45.3s32.8 12.5 45.3 0l160-160z"></path></svg>
+                </button>
+            </div>
+        </div>
+    </div>
+</form>
+
+@section Scripts{
+
+ <script type="text/javascript">
+        var label = document.querySelector('.custum-file-upload');
+        var text = document.querySelector('.text');
+        var icon = document.querySelector('.icon');
+        var picbody = document.querySelector('.picbody');
+        var magnifier = document.querySelector('.magnifier');
+        var submit = document.querySelector('.submitBtn');
+        var inputbox = document.querySelectorAll('input');
+
+        //實作類似C# string.IsNullorEmpty
+        function IsNullOrEmpty(str) {
+            return str === null || str === undefined || str === '';
+        }
+        //檢查日期有沒有符合yyyy/MM/dd格式
+        function IsValidDate(dateString) {
+            var regex = /^\d{4}[\/.]\d{2}[\/.]\d{2}$/;
+            if (!regex.test(dateString)) {
+                return false;
+            }
+            var parts = dateString.split(/[\/.]/);
+            var year = parseInt(parts[0], 10);
+            var month = parseInt(parts[1], 10) - 1; // Months are zero-based
+            var day = parseInt(parts[2], 10);
+            var date = new Date(year, month, day);
+            return date.getFullYear() === year && date.getMonth() === month && date.getDate() === day;
+        };
+
+        //submit後清空input
+        submit.addEventListener('click', function(e) {
+            debugger;
+            //先檢查必填的都有要跳出alert上傳成功
+            var isValid = true;
+            if(IsNullOrEmpty(inputbox[0].value) || IsNullOrEmpty(inputbox[1].value) || IsNullOrEmpty(inputbox[2].value) || IsValidDate(inputbox[2].value) == false){
+                isValid = false;
+            }
+            if (isValid) {
+                e.preventDefault();
+                inputbox.forEach(function(input) {
+                    if (input.type !== 'file') {
+                        input.value = '';
+                    }
+                    label.style.backgroundImage = 'none';
+                    text.style.display = 'block';
+                    icon.style.display = 'block';
+                    inputbox[0].value = '';
+                    magnifier.style.display = "none";
+                });
+
+                Swal.fire({
+                  title: "圖片上傳成功",
+                  icon: "success",
+                  draggable: true
+                });
+            }
+        });
+
+        // Show the image in the modal when the magnifier is clicked
+        //inputbox[0]是圖檔 上傳後可以顯示圖片
+        inputbox[0].addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const img =new Image();
+                    img.onload = function(){
+                        picbody.innerHTML = '<img src="' + e.target.result + '" class="img-fluid" alt="Responsive image">';
+                        label.style.backgroundImage = 'url(' + e.target.result + ')';
+                        label.style.backgroundSize = 'cover';
+                        label.style.backgroundPosition = 'center center';
+                        text.style.display = 'none';
+                        icon.style.display = 'none';
+                        magnifier.style.display = 'block';
+                    }
+                    img.src = e.target.result;
+                };
+                reader.readAsDataURL(file);
+            } else {
+                label.style.backgroundImage = 'none';
+                text.style.display = 'block';
+                icon.style.display = 'block';
+                magnifier.style.display = 'none';
+                picbody.innerHTML = ''; // Clear the image in the modal body
+            }
+        });
+        // Delete button functionality
+        const deleteButton = document.querySelector('.delete');
+        deleteButton.addEventListener('click', function() {
+            label.style.backgroundImage = 'none';
+            text.style.display = 'block';
+            icon.style.display = 'block';
+            inputbox[0].value = ''; // Clear the file input
+            magnifier.style.display = "none";
+        });
+    </script>
+}

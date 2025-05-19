@@ -4,7 +4,8 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@ViewData["Title"] - Calligraphy</title>
-    <link href="~/assets/css/styles.min.css" rel="stylesheet" />
+    <link href="~/lib/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="~/sweetalert2/sweetalert2.min.css" rel="stylesheet" />
     @await RenderSectionAsync("Styles", required: false)
 </head>
 <body>
@@ -32,16 +33,27 @@
                                 <span class="hide-menu">主頁</span>
                             </a>
                         </li>
+                        <li class="sidebar-item">
+                            <a class="sidebar-link" asp-area="" asp-controller="Art" asp-action="ArtUpload" aria-expanded="false">
+                                <i class="ti ti-photo-up"></i>                                
+                                <span class="hide-menu">作品上傳</span>
+                            </a>
+                        </li>
                         @if (User.IsInRole("Admin"))
                         {
                             <li class="sidebar-item">
                                 <a class="sidebar-link" href="#" aria-expanded="false">
-                                    <i class="ti ti-atom"></i>
+                                    <i class="ti ti-user-circle"></i>
                                     <span class="hide-menu">用戶</span>
                                 </a>
                             </li>
                         }
-
+                        <li class="sidebar-item">
+                            <a class="sidebar-link" asp-area="" asp-controller="" asp-action="" aria-expanded="false">
+                                <i class="ti ti-settings"></i>
+                                <span class="hide-menu">設定</span>
+                            </a>
+                        </li>
                     </ul>
                 </nav>
                 <!-- End Sidebar navigation -->
@@ -77,29 +89,8 @@
                     </ul>
                     <div class="navbar-collapse justify-content-end px-0" id="navbarNav">
                         <ul class="navbar-nav flex-row ms-auto align-items-center justify-content-end">
-
-                            <li class="nav-item dropdown">
-                                <a class="nav-link " href="javascript:void(0)" id="drop2" data-bs-toggle="dropdown"
-                                   aria-expanded="false">
-                                    <img src="./assets/images/profile/user-1.jpg" alt="" width="35" height="35" class="rounded-circle">
-                                </a>
-                                <div class="dropdown-menu dropdown-menu-end dropdown-menu-animate-up" aria-labelledby="drop2">
-                                    <div class="message-body">
-                                        <a href="javascript:void(0)" class="d-flex align-items-center gap-2 dropdown-item">
-                                            <i class="ti ti-user fs-6"></i>
-                                            <p class="mb-0 fs-3">My Profile</p>
-                                        </a>
-                                        <a href="javascript:void(0)" class="d-flex align-items-center gap-2 dropdown-item">
-                                            <i class="ti ti-mail fs-6"></i>
-                                            <p class="mb-0 fs-3">My Account</p>
-                                        </a>
-                                        <a href="javascript:void(0)" class="d-flex align-items-center gap-2 dropdown-item">
-                                            <i class="ti ti-list-check fs-6"></i>
-                                            <p class="mb-0 fs-3">My Task</p>
-                                        </a>
-                                        <a asp-area="" asp-controller="SignUp" asp-action="Logout" class="btn btn-outline-primary mx-3 mt-2 d-block">Logout</a>
-                                    </div>
-                                </div>
+                            <li>
+                                <a asp-area="" asp-controller="SignUp" asp-action="Logout" class="btn btn-outline-primary mx-3 mt-2 d-block">Logout</a>
                             </li>
                         </ul>
                     </div>
@@ -115,7 +106,7 @@
     </div>
     <footer class="py-6 px-6 text-center">
         <div class="mb-0 fs-4">
-            &copy; @DateTime.Now.Year - Calligraphy - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+            &copy; @DateTime.Now.Year - RuoliCalligraphy  All rights reserved.
         </div>
     </footer>
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
@@ -125,6 +116,7 @@
     <script src="~/assets/libs/apexcharts/dist/apexcharts.min.js"></script>
     <script src="~/assets/libs/simplebar/dist/simplebar.js"></script>
     <script src="~/assets/js/dashboard.js" asp-append-version="true"></script>
+    <script src="~/sweetalert2/sweetalert2.all.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/iconify-icon@1.0.8/dist/iconify-icon.min.js"></script>
     @await RenderSectionAsync("Scripts", required: false)
 </body>

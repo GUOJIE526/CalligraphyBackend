@@ -28,7 +28,7 @@ namespace Calligraphy.Controllers
             //TbExhArtwork, TbExhComment關聯帶出List
             var dashboardData = _context.TbExhArtwork
                 .AsNoTracking()
-                .Where(d => d.IsVisible)
+                .Where(d => d.IsVisible && d.TbExhComment.Any(c => !string.IsNullOrEmpty(c.Message)))
                 .Select(d => new DashboardViewModel
                 {
                     ArtTitle = d.Title,
