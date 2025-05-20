@@ -90,7 +90,8 @@ namespace Calligraphy.Controllers
                 try
                 {
                     await _context.SaveChangesAsync();
-                    return View("ArtUpload");
+                    TempData["SuccessMessage"] = true;
+                    return RedirectToAction("ArtUpload");
                 }
                 catch (Exception ex)
                 {

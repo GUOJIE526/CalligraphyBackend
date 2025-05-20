@@ -8,22 +8,21 @@ namespace Calligraphy.ViewModel
     /// </summary>
     public class DashboardViewModel
     {
+        public Guid dashId { get; set; }
         [Display(Name = "作品")]
-        public string ArtTitle { get; set; } = null!;
+        public string artTitle { get; set; } = null!;
+
+        [Display(Name = "訪客名稱")]
+        public string userName { get; set; } = null!;
 
         [Display(Name = "訪客留言")]
-        public List<string> Comment { get; set; } = null!;
+        public string comment { get; set; } = null!;
 
-        [Display(Name = "回覆留言")]
-        public List<string> Reply { get; set; } = new();
+        [Display(Name = "留言時間")]
+        public DateTimeOffset commentCreate { get; set; }
+
+        [Display(Name = "作者回覆")]
+        public string reply { get; set; }
         // Add other properties as needed
-    }
-
-    /// <summary>
-    /// 回覆留言
-    /// </summary>
-    public class DashboardItemViewModel()
-    {
-        public string? Reply { get; set; }
     }
 }

@@ -1,86 +1,65 @@
 ﻿@using Calligraphy.ViewModel
 @model IEnumerable<Calligraphy.ViewModel.DashboardViewModel>
+@{
+    ViewData["Title"] = "最新留言";
+}
 @section Styles {
     <link href="~/assets/css/styles.min.css" rel="stylesheet" />
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/material-components-web/14.0.0/material-components-web.min.css" rel="stylesheet" />
+    <link href="https://cdn.datatables.net/2.1.7/css/dataTables.material.css" rel="stylesheet" />
 }
 
-<div class="text-center">
-    <div class="col-12">
-        <div class="card">
-            <div class="card-body">
-                <div class="d-md-flex align-items-center">
-                    <div>
-                        <h4 class="card-title">最新留言</h4>
-                    </div>
-                </div>
-                <div class="table-responsive mt-4">
-                    <table class="table mb-0 text-nowrap varient-table align-middle fs-3">
-                        <thead>
-                            <tr>
-                                <th scope="col" class="px-0 text-muted">
-                                    @Html.DisplayNameFor(model => model.ArtTitle)
-                                </th>
-                                <th scope="col" class="px-0 text-muted">
-                                    @Html.DisplayNameFor(model => model.Comment)
-                                </th>
-                                <th scope="col" class="px-0 text-muted">
-                                    @Html.DisplayNameFor(model => model.Reply)
-                                </th>
-                                <th></th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @foreach (var item in Model)
-                            {
-                                <tr>
-                                    <td class="px-0">
-                                        <div class="d-flex align-items-center">
-                                            <div class="ms-3">
-                                                <h6 class="mb-0 fw-bolder">
-                                                    @Html.DisplayFor(modelItem => item.ArtTitle)
-                                                </h6>
-                                            </div>
-                                        </div>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td class="px-0">
-                                        <div class="d-flex align-items-center">
-                                            <div class="ms-3">
-                                                <h6 class="mb-0 fw-bolder">
-                                                    @Html.DisplayFor(modelItem => item.Comment)
-                                                </h6>
-                                            </div>
-                                        </div>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td class="px-0">
-                                        <div class="d-flex align-items-center">
-                                            <div class="ms-3">
-                                                <h6 class="mb-0 fw-bolder">
-                                                    @Html.DisplayFor(modelItem => item.Reply)
-                                                </h6>
-                                            </div>
-                                        </div>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td class="px-0">
-                                        <div class="d-flex align-items-center">
-                                            <div class="ms-3">
-                                                <h6 class="mb-0 fw-bolder">
-                                                    <a href="#">回覆留言</a>
-                                                </h6>
-                                            </div>
-                                        </div>
-                                    </td>
-                                </tr>
-                            }
-                        </tbody>
-                    </table>
-                </div>
+<div class="card">
+    <div class="card-body">
+        <div class="d-block align-items-center">
+            <div>
+                <h4 class="card-title">@ViewData["Title"]</h4>
+            </div>
+            <table id="DashboardTable" class="mdl-data-table table-hover text-center" style="width:100%">
+                <thead class="text-nowrap">
+                    <tr>
+                        <th scope="col" class="text-muted">
+                            @Html.DisplayNameFor(model => model.artTitle)
+                        </th>
+                        <th scope="col" class="text-muted">
+                            @Html.DisplayNameFor(model => model.comment)
+                        </th>
+                        <th scope="col" class="text-muted">
+                            @Html.DisplayNameFor(model => model.commentCreate)
+                        <th scope="col" class="text-muted">
+                            @Html.DisplayNameFor(model => model.reply)
+                        </th>
+                        <th scope="col" class="text-muted">
+                            回覆
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!--回覆視窗-->
+<div class="modal fade" id="ReplyModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">回覆</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body Reply">
+                ...
             </div>
         </div>
     </div>
 </div>
+
+@section Scripts{
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/material-components-web/14.0.0/material-components-web.min.js"></script>
+    <script src="https://cdn.datatables.net/2.1.7/js/dataTables.js"></script>
+    <script src="https://cdn.datatables.net/2.1.7/js/dataTables.material.js"></script>
+    <script src="https://cdn.datatables.net/fixedheader/3.3.2/js/dataTables.fixedHeader.min.js"></script>
+    <script src="~/js/dashboard.js" asp-append-version="true"></script>
+}

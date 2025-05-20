@@ -4,6 +4,7 @@ using Calligraphy.ViewModel;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using NuGet.Versioning;
 
 namespace Calligraphy.Controllers
 {
@@ -18,24 +19,93 @@ namespace Calligraphy.Controllers
             _context = context;
         }
 
-        public IActionResult Index()
-        {
-            return View();
-        }
-
         public IActionResult Dashboard()
         {
-            //TbExhArtwork, TbExhComment關聯帶出List
-            var dashboardData = _context.TbExhArtwork
+            var newComment = _context.TbExhComment
                 .AsNoTracking()
-                .Where(d => d.IsVisible && d.TbExhComment.Any(c => !string.IsNullOrEmpty(c.Message)))
-                .Select(d => new DashboardViewModel
+                .Include(c => c.Artwork)
+                .Where(c => !string.IsNullOrEmpty(c.Message)).Select(c => new DashboardViewModel
                 {
-                    ArtTitle = d.Title,
-                    Comment = d.TbExhComment.Select(c => c.Message!).ToList(),
-                    Reply = d.TbExhComment.Select(c => c.Reply).ToList(),
+                    dashId = c.CommentId,
+                    artTitle = c.Artwork.Title,
+                    userName = c.UserName,
+                    comment = c.Message!,
+                    commentCreate = c.CreateDate,
+                    reply = c.Reply
                 }).ToList();
-            return View(dashboardData);
+            return View(newComment);
+        }
+
+        public IActionResult DashboardJson()
+        {
+            //TbExhArtwork, TbExhComment關聯帶出List
+            var newComment = _context.TbExhComment
+                .AsNoTracking()
+                .Include(c => c.Artwork)
+                .Where(c => !string.IsNullOrEmpty(c.Message)).Select(c => new DashboardViewModel
+                {
+                    dashId = c.CommentId,
+                    artTitle = c.Artwork.Title,
+                    userName = c.UserName,
+                    comment = c.Message!,
+                    commentCreate = c.CreateDate,
+                    reply = c.Reply
+                }).ToList();
+            return Json(newComment);
+        }
+
+        public async Task<IActionResult> ReplyPartial(Guid Id)
+        {
+            if(Id == Guid.Empty)
+            {
+                return NotFound();
+            }
+            var comment = await _context.TbExhComment
+                .AsNoTracking()
+                .Include(c => c.Artwork)
+                .FirstOrDefaultAsync(c => c.CommentId == Id);
+            if(comment == null)
+            {
+                return NotFound();
+            }
+            var vm = new DashboardViewModel
+            {
+                dashId = comment!.CommentId,
+                artTitle = comment.Artwork.Title,
+                userName = comment.UserName,
+                comment = comment.Message!,
+                reply = comment.Reply
+            };
+            return PartialView("_ReplyPartial", vm);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Reply(DashboardViewModel model)
+        {
+            if (model.dashId == Guid.Empty)
+            {
+                return NotFound();
+            }
+            var newComment = await _context.TbExhComment
+                .AsNoTracking()
+                .Include(c => c.Artwork)
+                .FirstOrDefaultAsync(c => c.CommentId == model.dashId);
+            if (newComment != null)
+            {
+                try
+                {
+                    newComment.Reply = model.reply;
+                    _context.Update(newComment);
+                    await _context.SaveChangesAsync();
+                }
+                catch(DbUpdateConcurrencyException ex)
+                {
+                    _logger.LogError(ex, "Error updating comment with ID {Id}", model.dashId);
+                    return Json(new { success = false, message = "回覆失敗" });
+                }
+            }
+            return Json(new { success = true });
         }
 
         public IActionResult Privacy()

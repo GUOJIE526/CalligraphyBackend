@@ -1,7 +1,7 @@
 ﻿@using Calligraphy.ViewModel
 @model ArtViewModel
 @{
-    ViewData["Title"] = "圖片上傳";
+    ViewData["Title"] = "作品上傳";
 }
 @section Styles{
     <link href="~/css/artupload.css" rel="stylesheet" asp-append-version="true" />
@@ -96,6 +96,18 @@
 
 @section Scripts{
 
+    @if (TempData["SuccessMessage"] != null && (bool)TempData["SuccessMessage"])
+    {
+        <script type="text/javascript">
+        Swal.fire({
+            title: "圖片上傳成功",
+            icon: "success",
+            draggable: true
+        });
+
+        </script>
+    }
+
  <script type="text/javascript">
         var label = document.querySelector('.custum-file-upload');
         var text = document.querySelector('.text');
@@ -123,34 +135,37 @@
             return date.getFullYear() === year && date.getMonth() === month && date.getDate() === day;
         };
 
-        //submit後清空input
-        submit.addEventListener('click', function(e) {
-            debugger;
-            //先檢查必填的都有要跳出alert上傳成功
-            var isValid = true;
-            if(IsNullOrEmpty(inputbox[0].value) || IsNullOrEmpty(inputbox[1].value) || IsNullOrEmpty(inputbox[2].value) || IsValidDate(inputbox[2].value) == false){
-                isValid = false;
-            }
-            if (isValid) {
-                e.preventDefault();
-                inputbox.forEach(function(input) {
-                    if (input.type !== 'file') {
-                        input.value = '';
-                    }
-                    label.style.backgroundImage = 'none';
-                    text.style.display = 'block';
-                    icon.style.display = 'block';
-                    inputbox[0].value = '';
-                    magnifier.style.display = "none";
-                });
 
-                Swal.fire({
-                  title: "圖片上傳成功",
-                  icon: "success",
-                  draggable: true
-                });
-            }
-        });
+        //submit後清空input
+        // submit.addEventListener('click', function(e) {
+        //     debugger;
+        //     //先檢查必填的都有要跳出alert上傳成功
+        //     var isValid = true;
+        //     if(IsNullOrEmpty(inputbox[0].value) || IsNullOrEmpty(inputbox[1].value) || IsNullOrEmpty(inputbox[2].value) || IsValidDate(inputbox[2].value) == false){
+        //         isValid = false;
+        //     }
+        //     if (isValid) {
+        //         e.preventDefault();
+        //         inputbox.forEach(function(input) {
+        //             if (input.type !== 'file') {
+        //                 input.value = '';
+        //             }
+        //             label.style.backgroundImage = 'none';
+        //             text.style.display = 'block';
+        //             icon.style.display = 'block';
+        //             inputbox[0].value = '';
+        //             magnifier.style.display = "none";
+        //         });
+
+        //         Swal.fire({
+        //           title: "圖片上傳成功",
+        //           icon: "success",
+        //           draggable: true
+        //         });
+        //         //submit到後端
+
+        //     }
+        // });
 
         // Show the image in the modal when the magnifier is clicked
         //inputbox[0]是圖檔 上傳後可以顯示圖片

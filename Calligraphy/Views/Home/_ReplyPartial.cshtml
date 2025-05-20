@@ -1,0 +1,31 @@
+﻿@model Calligraphy.ViewModel.DashboardViewModel
+
+<div class="container">
+    <div class="col-md-12">
+        <form asp-action="Reply" id="ReplyForm" method="post" asp-route-id="@Model.dashId">
+            @Html.AntiForgeryToken()
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input type="hidden" asp-for="dashId" />
+            <div class="form-group">
+                <label asp-for="userName" class="control-label"></label>
+                <input asp-for="userName" value="@Model.userName" class="form-control" readonly />
+            </div>
+            <div class="form-group">
+                <label asp-for="comment" class="control-label"></label>
+                <textarea asp-for="comment" value="@Model.comment" rows="5" cols="20" style="resize:none;" readonly class="form-control"></textarea>
+            </div>
+            <div class="form-group">
+                <label asp-for="reply" class="control-label"></label>
+                <textarea asp-for="reply" rows="5" cols="20" style="resize:none;" class="form-control"></textarea>
+                <span asp-validation-for="reply" class="text-danger"></span>
+            </div>
+            <div class="form-group mt-3">
+                <input type="submit" value="送出" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}
