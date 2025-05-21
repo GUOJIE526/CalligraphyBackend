@@ -9,11 +9,11 @@ label{
 }
 /* From Uiverse.io by Praashoo7 */
 .login-background {
-    min-height: 100vh;
+    min-height: 100%;
     display: flex;
     justify-content: center;
     align-items: center;
-    background-color: rgb(255, 255, 255); /* 可選 */
+    background-color: rgb(255, 255, 255); 
 }
 
 .form {

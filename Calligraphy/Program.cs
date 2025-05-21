@@ -26,14 +26,8 @@ builder.Services.AddHttpContextAccessor();
 builder.Services.AddScoped<AuthHelper>();
 builder.Services.AddScoped<IEmailService, SmtpEmailService>();
 //ÅçÃÒµn¤Jcookie
-builder.Services.AddAuthentication()
-    .AddCookie("AdminCookie", options =>
-    {
-        options.LoginPath = "/SignUp/Login";
-        options.SlidingExpiration = true;
-        options.AccessDeniedPath = "/SignUp/Login";
-    })
-    .AddCookie("ArtistCookie", options =>
+builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+    .AddCookie(options =>
     {
         options.LoginPath = "/SignUp/Login";
         options.SlidingExpiration = true;

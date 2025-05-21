@@ -1,5 +1,4 @@
-﻿@model ErrorViewModel
-@{
+﻿@{
     ViewData["Title"] = "Error";
     Layout = null;
 }
@@ -8,24 +7,23 @@
 <h1 class="text-danger">Error.</h1>
 <h2 class="text-danger">An error occurred while processing your request.</h2>
 
-@if (Model.ShowRequestId)
-{
-    <p>
-        <strong>Request ID:</strong> <code>@Model.RequestId</code>
-    </p>
-}
-
 <div class="noise"></div>
 <div class="overlay"></div>
 <div class="terminal">
     <h1>Error <span class="errorcode">404</span></h1>
     @if (TempData["LimitError"] != null && (bool)TempData["LimitError"])
     {
-        <h2>連結失效</h2>
+        <h2>密碼重設連結失效</h2>
+    }
+    @if (TempData["ConfirmError"] != null && (bool)TempData["ConfirmError"])
+    {
+        <h2>驗證信連結已過期</h2>
     }
     <p class="output">The page you are looking for might have been removed, had its name changed or is temporarily unavailable.</p>
-    <p class="output">Please try to 
-        <a href="javascript:history.back()">go back</a> or 
-        <a href="@Url.Action("Dashboard", "Home")">返回首頁</a>.</p>
+    <p class="output">
+        Please try to
+        <a href="javascript:history.back()">go back</a> or
+        <a href="@Url.Action("Dashboard", "Home")">返回首頁</a>.
+    </p>
     <p class="output">Good luck.</p>
 </div>

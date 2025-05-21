@@ -13,50 +13,65 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 </head>
 <!-- From Uiverse.io by Praashoo7 -->
-<body class="login-background">
-    <form class="form login-box" asp-action="Login" method="post">
-        <p id="heading">@ViewData["Title"]</p>
-        <div class="field">
-            <svg class="input-icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
-                <path d="M13.106 7.222c0-2.967-2.249-5.032-5.482-5.032-3.35 0-5.646 2.318-5.646 5.702 0 3.493 2.235 5.708 5.762 5.708.862 0 1.689-.123 2.304-.335v-.862c-.43.199-1.354.328-2.29.328-2.926 0-4.813-1.88-4.813-4.798 0-2.844 1.921-4.881 4.594-4.881 2.735 0 4.608 1.688 4.608 4.156 0 1.682-.554 2.769-1.416 2.769-.492 0-.772-.28-.772-.76V5.206H8.923v.834h-.11c-.266-.595-.881-.964-1.6-.964-1.4 0-2.378 1.162-2.378 2.823 0 1.737.957 2.906 2.379 2.906.8 0 1.415-.39 1.709-1.087h.11c.081.67.703 1.148 1.503 1.148 1.572 0 2.57-1.415 2.57-3.643zm-7.177.704c0-1.197.54-1.907 1.456-1.907.93 0 1.524.738 1.524 1.907S8.308 9.84 7.371 9.84c-.895 0-1.442-.725-1.442-1.914z"></path>
-            </svg>
-            <input autocomplete="off" placeholder="使用者名稱" asp-for="Username" class="input-field" type="text">
-        </div>
-        <span>
-            @Html.ValidationMessageFor(model => model.Username, "", new { @class = "text-danger" })
-        </span>
-        <div class="field">
-            <svg class="input-icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
-                <path d="M8 1a2 2 0 0 1 2 2v4H6V3a2 2 0 0 1 2-2zm3 6V3a3 3 0 0 0-6 0v4a2 2 0 0 0-2 2v5a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2z"></path>
-            </svg>
-            <input placeholder="密碼" asp-for="Password" class="input-field" type="password">
-            <div class="eye" >
-                <svg width="18px" height="18px" data-name="Layer 1" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M10.94,6.08A6.93,6.93,0,0,1,12,6c3.18,0,6.17,2.29,7.91,6a15.23,15.23,0,0,1-.9,1.64,1,1,0,0,0-.16.55,1,1,0,0,0,1.86.5,15.77,15.77,0,0,0,1.21-2.3,1,1,0,0,0,0-.79C19.9,6.91,16.1,4,12,4a7.77,7.77,0,0,0-1.4.12,1,1,0,1,0,.34,2ZM3.71,2.29A1,1,0,0,0,2.29,3.71L5.39,6.8a14.62,14.62,0,0,0-3.31,4.8,1,1,0,0,0,0,.8C4.1,17.09,7.9,20,12,20a9.26,9.26,0,0,0,5.05-1.54l3.24,3.25a1,1,0,0,0,1.42,0,1,1,0,0,0,0-1.42Zm6.36,9.19,2.45,2.45A1.81,1.81,0,0,1,12,14a2,2,0,0,1-2-2A1.81,1.81,0,0,1,10.07,11.48ZM12,18c-3.18,0-6.17-2.29-7.9-6A12.09,12.09,0,0,1,6.8,8.21L8.57,10A4,4,0,0,0,14,15.43L15.59,17A7.24,7.24,0,0,1,12,18Z" fill="#6563ff"/></svg>
-                <svg style="display: none" width="18px" height="18px" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M21.92,11.6C19.9,6.91,16.1,4,12,4S4.1,6.91,2.08,11.6a1,1,0,0,0,0,.8C4.1,17.09,7.9,20,12,20s7.9-2.91,9.92-7.6A1,1,0,0,0,21.92,11.6ZM12,18c-3.17,0-6.17-2.29-7.9-6C5.83,8.29,8.83,6,12,6s6.17,2.29,7.9,6C18.17,15.71,15.17,18,12,18ZM12,8a4,4,0,1,0,4,4A4,4,0,0,0,12,8Zm0,6a2,2,0,1,1,2-2A2,2,0,0,1,12,14Z" fill="#6563ff"/></svg>
-            </div>
-        </div>
-        <span>
-            @Html.ValidationMessageFor(model => model.Password, "", new { @class = "text-danger" })
-        </span>
-        <div class="btn">
-            <button type="submit" class="button1">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;登入&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</button>
-            <button type="button" class="button2" onclick="location.href='@Url.Action("Register", "SignUp")'">註冊</button>
-        </div>
-        <!-- From Uiverse.io by mrhyddenn -->
-        <div class="contain">
-            <input asp-for="RememberMe" type="checkbox" id="cbx" style="display: none;">
-            <label asp-for="RememberMe" for="cbx" class="check">
-                <svg width="18px" height="18px" viewBox="0 0 18 18">
-                    <path d="M1,9 L1,3.5 C1,2 2,1 3.5,1 L14.5,1 C16,1 17,2 17,3.5 L17,14.5 C17,16 16,17 14.5,17 L3.5,17 C2,17 1,16 1,14.5 L1,9 Z"></path>
-                    <polyline points="1 9 7 14 15 4"></polyline>
+<body>
+    <div class="login-background">
+        <form class="form login-box" asp-action="Login" method="post">
+            @Html.AntiForgeryToken()
+            <p id="heading">@ViewData["Title"]</p>
+            <div class="field">
+                <svg class="input-icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+                    <path d="M13.106 7.222c0-2.967-2.249-5.032-5.482-5.032-3.35 0-5.646 2.318-5.646 5.702 0 3.493 2.235 5.708 5.762 5.708.862 0 1.689-.123 2.304-.335v-.862c-.43.199-1.354.328-2.29.328-2.926 0-4.813-1.88-4.813-4.798 0-2.844 1.921-4.881 4.594-4.881 2.735 0 4.608 1.688 4.608 4.156 0 1.682-.554 2.769-1.416 2.769-.492 0-.772-.28-.772-.76V5.206H8.923v.834h-.11c-.266-.595-.881-.964-1.6-.964-1.4 0-2.378 1.162-2.378 2.823 0 1.737.957 2.906 2.379 2.906.8 0 1.415-.39 1.709-1.087h.11c.081.67.703 1.148 1.503 1.148 1.572 0 2.57-1.415 2.57-3.643zm-7.177.704c0-1.197.54-1.907 1.456-1.907.93 0 1.524.738 1.524 1.907S8.308 9.84 7.371 9.84c-.895 0-1.442-.725-1.442-1.914z"></path>
                 </svg>
-                記住我
-            </label>
-        </div>
-        <a class="btn button3" href="@Url.Action("ForgotPassword", "SignUp")">忘記密碼?</a>
-    </form>
+                <input autocomplete="off" placeholder="使用者名稱" asp-for="Username" class="input-field" type="text">
+            </div>
+            <span>
+                @Html.ValidationMessageFor(model => model.Username, "", new { @class = "text-danger" })
+            </span>
+            <div class="field">
+                <svg class="input-icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+                    <path d="M8 1a2 2 0 0 1 2 2v4H6V3a2 2 0 0 1 2-2zm3 6V3a3 3 0 0 0-6 0v4a2 2 0 0 0-2 2v5a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2z"></path>
+                </svg>
+                <input placeholder="密碼" asp-for="Password" class="input-field" type="password">
+                <div class="eye" >
+                    <svg width="18px" height="18px" data-name="Layer 1" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M10.94,6.08A6.93,6.93,0,0,1,12,6c3.18,0,6.17,2.29,7.91,6a15.23,15.23,0,0,1-.9,1.64,1,1,0,0,0-.16.55,1,1,0,0,0,1.86.5,15.77,15.77,0,0,0,1.21-2.3,1,1,0,0,0,0-.79C19.9,6.91,16.1,4,12,4a7.77,7.77,0,0,0-1.4.12,1,1,0,1,0,.34,2ZM3.71,2.29A1,1,0,0,0,2.29,3.71L5.39,6.8a14.62,14.62,0,0,0-3.31,4.8,1,1,0,0,0,0,.8C4.1,17.09,7.9,20,12,20a9.26,9.26,0,0,0,5.05-1.54l3.24,3.25a1,1,0,0,0,1.42,0,1,1,0,0,0,0-1.42Zm6.36,9.19,2.45,2.45A1.81,1.81,0,0,1,12,14a2,2,0,0,1-2-2A1.81,1.81,0,0,1,10.07,11.48ZM12,18c-3.18,0-6.17-2.29-7.9-6A12.09,12.09,0,0,1,6.8,8.21L8.57,10A4,4,0,0,0,14,15.43L15.59,17A7.24,7.24,0,0,1,12,18Z" fill="#6563ff"/></svg>
+                    <svg style="display: none" width="18px" height="18px" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M21.92,11.6C19.9,6.91,16.1,4,12,4S4.1,6.91,2.08,11.6a1,1,0,0,0,0,.8C4.1,17.09,7.9,20,12,20s7.9-2.91,9.92-7.6A1,1,0,0,0,21.92,11.6ZM12,18c-3.17,0-6.17-2.29-7.9-6C5.83,8.29,8.83,6,12,6s6.17,2.29,7.9,6C18.17,15.71,15.17,18,12,18ZM12,8a4,4,0,1,0,4,4A4,4,0,0,0,12,8Zm0,6a2,2,0,1,1,2-2A2,2,0,0,1,12,14Z" fill="#6563ff"/></svg>
+                </div>
+            </div>
+            <span>
+                @Html.ValidationMessageFor(model => model.Password, "", new { @class = "text-danger" })
+            </span>
+            <div class="btn">
+                <button type="submit" class="button1">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;登入&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</button>
+                <button type="button" class="button2" onclick="location.href='@Url.Action("Register", "SignUp")'">註冊</button>
+            </div>
+            <!-- From Uiverse.io by mrhyddenn -->
+            <div class="contain">
+                <input asp-for="RememberMe" type="checkbox" id="cbx" style="display: none;">
+                <label asp-for="RememberMe" for="cbx" class="check">
+                    <svg width="18px" height="18px" viewBox="0 0 18 18">
+                        <path d="M1,9 L1,3.5 C1,2 2,1 3.5,1 L14.5,1 C16,1 17,2 17,3.5 L17,14.5 C17,16 16,17 14.5,17 L3.5,17 C2,17 1,16 1,14.5 L1,9 Z"></path>
+                        <polyline points="1 9 7 14 15 4"></polyline>
+                    </svg>
+                    記住我
+                </label>
+            </div>
+            <a class="btn button3" href="@Url.Action("ForgotPassword", "SignUp")">忘記密碼?</a>
+        </form>
+        <!-- Remove the container if you want to extend the Footer to full width. -->
+    </div>
+    <div>
+        <footer class="text-center text-lg-start" style="background-color: #D0D0D0;">
+            <!-- Copyright -->
+            <div style="background-color: rgba(0, 0, 0, 0.2);display:flex;justify-content:center;padding:3px;">
+                © @DateTime.Now.Year Copyright: 
+                <a class="text-white" href="https://guojie526.github.io/PortfolioWeb/">GuoJie.com</a>
+            </div>
+            <!-- Copyright -->
+        </footer>
+        <!-- End of .container -->
+    </div>
 </body>
 
 <script type="text/javascript">

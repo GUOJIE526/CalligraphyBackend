@@ -1,14 +1,15 @@
-using System.Diagnostics;
 using Calligraphy.Models;
 using Calligraphy.ViewModel;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using NuGet.Versioning;
+using System.Diagnostics;
 
 namespace Calligraphy.Controllers
 {
-    [Authorize(AuthenticationSchemes = "AdminCookie, ArtistCookie", Roles = "Admin,Artist")]
+    [Authorize(AuthenticationSchemes = CookieAuthenticationDefaults.AuthenticationScheme, Roles = "Admin,Artist")]
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;

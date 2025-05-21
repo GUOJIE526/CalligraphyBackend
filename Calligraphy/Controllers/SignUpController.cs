@@ -43,6 +43,7 @@ namespace Calligraphy.Controllers
         /// <param name="model"></param>
         /// <returns></returns>
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> Login(LoginViewModel model)
         {
             if (!ModelState.IsValid)
@@ -78,6 +79,7 @@ namespace Calligraphy.Controllers
         /// <param name="model"></param>
         /// <returns></returns>
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> Register(RegisterViewModel model)
         {
             if (!ModelState.IsValid)
@@ -86,7 +88,7 @@ namespace Calligraphy.Controllers
             }
             if (await _context.TbExhUser.AnyAsync(u => u.Email == model.Email))
             {
-                ModelState.AddModelError("Username", "帳號已存在");
+                ModelState.AddModelError("Email", "帳號已存在");
                 return View(model);
             }
             if (string.IsNullOrEmpty(model.Name))
@@ -136,10 +138,9 @@ namespace Calligraphy.Controllers
         /// <param name="email"></param>
         /// <param name="check"></param>
         /// <returns></returns>
-        public IActionResult RegisterRemind(string email, bool check)
+        public IActionResult RegisterRemind(string email)
         {
             ViewBag.Email = email;
-            ViewBag.Check = check;
             return View();
         }
 
@@ -149,20 +150,17 @@ namespace Calligraphy.Controllers
         /// <param name="email"></param>
         /// <returns></returns>
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> ResendConfirmEmail(string email)
         {
-            bool check = false;
             var user = await _context.TbExhUser
                 .FirstOrDefaultAsync(u => u.Email == email);
             if (user == null)
             {
-                ViewBag.ErrorMessage = "使用者錯誤";
-                ViewBag.Email = email;
                 return View("RegisterRemind");
             }
             if(user.MailConfirm == true)
             {
-                ViewBag.ErrorMessage = "使用者已驗證";
                 return View("RegisterRemind");
             }
             user.MailConfirmcode = Guid.NewGuid().ToString();
@@ -176,14 +174,14 @@ namespace Calligraphy.Controllers
                                                                                         <p>請點擊以下連結以完成帳號驗證：</p>
                                                                                         <p><a href=""{confirmLink}"">{confirmLink}</a></p>
                                                                                         <p>此連結將於 24 小時內失效。</p>");
-                check = true;
             }
             catch (TaskCanceledException)
             {
                 _logger.LogError("Email sending timed out.");
             }
             await _context.SaveChangesAsync();
-            return RedirectToAction("RegisterRemind", "SignUp", new { email = user.Email, check });
+            TempData["ResendMessage"] = true;
+            return RedirectToAction("RegisterRemind", "SignUp", new { email = user.Email });
         }
 
         /// <summary>
@@ -198,7 +196,8 @@ namespace Calligraphy.Controllers
                 .FirstOrDefaultAsync(u => u.MailConfirmcode == token && u.Email == email);
             if (user == null || user.MailConfirmdate < DateTime.UtcNow)
             {
-                return View("Error");
+                TempData["ConfirmError"] = true;
+                return RedirectToAction("Error");
             }
             user.MailConfirm = true;
             await _context.SaveChangesAsync();
@@ -215,14 +214,9 @@ namespace Calligraphy.Controllers
         /// <summary>
         /// 忘記密碼頁面
         /// </summary>
-        /// <param name="check"></param>
-        /// <returns>check=true前端才會跳alert提醒</returns>
-        public IActionResult ForgotPassword(bool check)
+        /// <returns></returns>
+        public IActionResult ForgotPassword()
         {
-            if (check)
-            {
-                ViewBag.Check = check;
-            }
             return View();
         }
 
@@ -232,9 +226,9 @@ namespace Calligraphy.Controllers
         /// <param name="email"></param>
         /// <returns></returns>
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> ForgotPassword(string email)
         {
-            bool check = false;
             var user = await _context.TbExhUser
                 .FirstOrDefaultAsync(u => u.Email == email);
             if (user == null)
@@ -255,14 +249,14 @@ namespace Calligraphy.Controllers
                                                                                         <p>請點擊以下連結以重設密碼：</p>
                                                                                         <p><a href=""{resetLink}"">{resetLink}</a></p>
                                                                                         <p>此連結將於 24 小時內失效。</p>");
-                check = true;
             }
             catch (TaskCanceledException)
             {
                 _logger.LogError("Email sending timed out.");
             }
             await _context.SaveChangesAsync();
-            return RedirectToAction("ForgotPassword", "SignUp", new { check });
+            TempData["ForgotPassword"] = true;
+            return RedirectToAction("ForgotPassword", "SignUp");
         }
 
         /// <summary>
@@ -271,7 +265,6 @@ namespace Calligraphy.Controllers
         /// <returns></returns>
         public IActionResult ResetPassword(string token, string email)
         {
-            bool check = false;
             var user = _context.TbExhUser
                 .FirstOrDefault(u => u.RestpwdToken == token && u.Email == email);
             if (user != null)
@@ -281,9 +274,8 @@ namespace Calligraphy.Controllers
                 ViewBag.Email = user.Email;
                 if (user.RestpwdLimitdate < DateTime.UtcNow)
                 {
-                    check = true;
-                    ViewBag.ErrorMessage = "連結已失效";
-                    ViewBag.Check = check;
+                    TempData["LimitError"] = true;
+                    return RedirectToAction("Error");
                 }
                 if (user.RestpwdConfirm == true)
                 {
@@ -293,7 +285,13 @@ namespace Calligraphy.Controllers
             return View();
         }
 
+        /// <summary>
+        /// 重設密碼
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> ResetPassword(ResetPwdViewModel model)
         {
             var user = await _context.TbExhUser
@@ -323,6 +321,15 @@ namespace Calligraphy.Controllers
                 return View();
             }
             return RedirectToAction("ResetPassword", "SignUp", new { token, email });
+        }
+
+        /// <summary>
+        /// 404頁面
+        /// </summary>
+        /// <returns></returns>
+        public IActionResult Error()
+        {
+            return View();
         }
 
         /// <summary>

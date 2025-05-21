@@ -7,6 +7,7 @@
 <!-- From Uiverse.io by ahmed150up -->
 <head>
     <link href="~/css/register.css" rel="stylesheet" />
+    <link href="~/sweetalert2/sweetalert2.min.css" rel="stylesheet" />
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 </head>
@@ -17,6 +18,7 @@
         </div>
         <div class="card-body">
             <form asp-action="Register" method="post">
+                @Html.AntiForgeryToken()
                 <div class="form-group">
                     <label asp-for="Email">信箱:</label>
                     <input asp-for="Email" class="form-control" id="email" type="email">

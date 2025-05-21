@@ -1,11 +1,12 @@
 ﻿using Calligraphy.Models;
 using Calligraphy.ViewModel;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Calligraphy.Controllers
 {
-    [Authorize(AuthenticationSchemes = "AdminCookie, ArtistCookie", Roles = "Admin,Artist")]
+    [Authorize(AuthenticationSchemes = CookieAuthenticationDefaults.AuthenticationScheme, Roles = "Admin,Artist")]
     public class ArtController : Controller
     {
         private readonly ILogger<ArtController> _logger;
