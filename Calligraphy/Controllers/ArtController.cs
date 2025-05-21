@@ -39,7 +39,7 @@ namespace Calligraphy.Controllers
             if (model.File != null && model.File.Length > 0)
             {
                 // 儲存檔案的路徑
-                var filePath = Path.Combine(Directory.GetCurrentDirectory(), "Images", model.File.FileName);
+                var filePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "Images", model.File.FileName);
                 // 儲存檔案
                 using (var stream = new FileStream(filePath, FileMode.Create))
                 {
@@ -78,7 +78,7 @@ namespace Calligraphy.Controllers
                 {
                     Title = model.Title,
                     Description = model.Content,
-                    ImageUrl = model.File != null ? Path.Combine("Images", model.File.FileName) : null,
+                    ImageUrl = model.File != null ? $"/Images/{model.File.FileName}" : null,
                     CreatedYear = DateTime.Parse(model.Year),
                     Style = model.Style,
                     Material = model.Material,
