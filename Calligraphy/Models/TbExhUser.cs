@@ -41,5 +41,7 @@ public partial class TbExhUser
 
     public bool RestpwdConfirm { get; set; }
 
+    public virtual ICollection<TbExhArtwork> TbExhArtwork { get; set; } = new List<TbExhArtwork>();
+
     public virtual ICollection<TbExhLog> TbExhLog { get; set; } = new List<TbExhLog>();
 }

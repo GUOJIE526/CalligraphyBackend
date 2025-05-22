@@ -17,6 +17,7 @@ namespace Calligraphy.Services
         {
             var claims = new List<Claim>
             {
+                new Claim(ClaimTypes.NameIdentifier, exhUser.UserId.ToString()),
                 new Claim(ClaimTypes.Name, exhUser.DisplayName),
                 new Claim(ClaimTypes.Role, exhUser.Role)
             };

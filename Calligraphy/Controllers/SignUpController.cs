@@ -339,7 +339,8 @@ namespace Calligraphy.Controllers
         public async Task<IActionResult> Logout()
         {
             await _authHelper.SignOutUserAsync();
-            return View("Login");
+            //一定要返回新的Login 不然預設AspNetCore.Antiforgery的cookie不會刷新會報400錯
+            return RedirectToAction("Login");
         }
     }
 }

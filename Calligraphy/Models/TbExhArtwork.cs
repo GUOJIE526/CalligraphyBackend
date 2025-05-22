@@ -37,6 +37,10 @@ public partial class TbExhArtwork
 
     public string? Modifier { get; set; }
 
+    public Guid CreatorId { get; set; }
+
+    public virtual TbExhUser CreatorNavigation { get; set; } = null!;
+
     public virtual TbExhExhibition? Exhibition { get; set; }
 
     public virtual ICollection<TbExhComment> TbExhComment { get; set; } = new List<TbExhComment>();

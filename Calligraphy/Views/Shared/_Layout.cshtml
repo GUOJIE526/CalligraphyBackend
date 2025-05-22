@@ -39,15 +39,12 @@
                                 <span class="hide-menu">作品上傳</span>
                             </a>
                         </li>
-                        @if (User.IsInRole("Admin"))
-                        {
-                            <li class="sidebar-item">
-                                <a class="sidebar-link" href="#" aria-expanded="false">
-                                    <i class="ti ti-user-circle"></i>
-                                    <span class="hide-menu">用戶</span>
-                                </a>
-                            </li>
-                        }
+                        <li class="sidebar-item">
+                            <a class="sidebar-link" asp-area="" asp-controller="Home" asp-action="AllArtWork" aria-expanded="false">
+                                <i class="ti ti-layout-collage"></i>
+                                <span class="hide-menu">作品檢視</span>
+                            </a>
+                        </li>
                         <li class="sidebar-item">
                             <a class="sidebar-link" asp-area="" asp-controller="" asp-action="" aria-expanded="false">
                                 <i class="ti ti-settings"></i>
@@ -70,23 +67,18 @@
                                 <i class="ti ti-menu-2"></i>
                             </a>
                         </li>
-                        <li class="nav-item dropdown">
+@*                         <li class="nav-item dropdown">
                             <a class="nav-link " href="javascript:void(0)" id="drop1" data-bs-toggle="dropdown" aria-expanded="false">
                                 <i class="ti ti-bell"></i>
                                 <div class="notification bg-primary rounded-circle"></div>
                             </a>
                             <div class="dropdown-menu dropdown-menu-animate-up" aria-labelledby="drop1">
                                 <div class="message-body">
-                                    <a href="javascript:void(0)" class="dropdown-item">
-                                        Item 1
-                                    </a>
-                                    <a href="javascript:void(0)" class="dropdown-item">
-                                        Item 2
-                                    </a>
+                                    <span>載入中...</span>
                                 </div>
                             </div>
                         </li>
-                    </ul>
+ *@                    </ul>
                     <div class="navbar-collapse justify-content-end px-0" id="navbarNav">
                         <ul class="navbar-nav flex-row ms-auto align-items-center justify-content-end">
                             <li>

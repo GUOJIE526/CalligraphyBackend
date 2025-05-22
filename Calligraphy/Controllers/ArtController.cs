@@ -3,6 +3,7 @@ using Calligraphy.ViewModel;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 
 namespace Calligraphy.Controllers
 {
@@ -85,6 +86,7 @@ namespace Calligraphy.Controllers
                     Dimensions = model.Size,
                     IsVisible = model.IsVisible,
                     Creator = User.Identity!.Name,
+                    CreatorId = Guid.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!),
                     CreateFrom = HttpContext.Connection.RemoteIpAddress?.ToString(),
                 };
                 _context.TbExhArtwork.Add(art);
