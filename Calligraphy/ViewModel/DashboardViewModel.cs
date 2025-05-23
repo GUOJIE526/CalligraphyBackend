@@ -22,7 +22,13 @@ namespace Calligraphy.ViewModel
         public DateTimeOffset commentCreate { get; set; }
 
         [Display(Name = "作者回覆")]
-        public string reply { get; set; }
+        public string? reply { get; set; }
         // Add other properties as needed
+        public Guid likeId { get; set; }
+        public Guid artId { get; set; }
+
+        [Display(Name = "讚數")]
+        public int likeCount { get; set; }
+
     }
 }

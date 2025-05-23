@@ -6,6 +6,11 @@
     <title>@ViewData["Title"] - Calligraphy</title>
     <link href="~/lib/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet" />
     <link href="~/sweetalert2/sweetalert2.min.css" rel="stylesheet" />
+    <style>
+        *{
+            font-size: large;
+        }
+    </style>
     @await RenderSectionAsync("Styles", required: false)
 </head>
 <body>
@@ -43,12 +48,6 @@
                             <a class="sidebar-link" asp-area="" asp-controller="Home" asp-action="AllArtWork" aria-expanded="false">
                                 <i class="ti ti-layout-collage"></i>
                                 <span class="hide-menu">作品檢視</span>
-                            </a>
-                        </li>
-                        <li class="sidebar-item">
-                            <a class="sidebar-link" asp-area="" asp-controller="" asp-action="" aria-expanded="false">
-                                <i class="ti ti-settings"></i>
-                                <span class="hide-menu">設定</span>
                             </a>
                         </li>
                     </ul>

@@ -202,6 +202,7 @@ namespace Calligraphy.Controllers
 
 
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> ToggleIsVisible([FromBody] ToggleVisibilityViewModel model)
         {
             if (model.ArtWorkId == Guid.Empty)
@@ -223,6 +224,11 @@ namespace Calligraphy.Controllers
             return Ok();
         }
 
+        /// <summary>
+        /// ArtWork視窗檢視
+        /// </summary>
+        /// <param name="Id"></param>
+        /// <returns></returns>
         public async Task<IActionResult> ArtWorkPartial(Guid Id)
         {
             if (Id == Guid.Empty)
@@ -248,6 +254,66 @@ namespace Calligraphy.Controllers
                 IsVisible = artwork.IsVisible
             };
             return PartialView("_ArtWorkPartial", vm);
+        }
+
+        /// <summary>
+        /// 回傳作品圖片
+        /// </summary>
+        /// <param name="artWorkId"></param>
+        /// <returns></returns>
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> ArtWorkImages([FromBody] Guid artWorkId)
+        {
+            if(artWorkId == Guid.Empty)
+            {
+                return NotFound();
+            }
+            var artImage = await _context.TbExhArtwork
+                .AsNoTracking()
+                .Where(a => a.ArtworkId == artWorkId)
+                .Select(a => new
+                {
+                    a.ImageUrl,
+                }).FirstOrDefaultAsync();
+            if (artImage == null)
+            {
+                return NotFound();
+            }
+            return Json(new { success = true, artImage = artImage.ImageUrl });
+        }
+
+        //按讚紀錄
+        public IActionResult LikeRecord()
+        {
+            return View();
+        }
+        //按讚紀錄Json
+        public IActionResult LikeRecordJson()
+        {
+            //TbExhArtwork, TbExhLike 一對多 一個artId有多個likeId 計算likeId數量
+            var userIdString = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (!Guid.TryParse(userIdString, out Guid userId))
+            {
+                return NotFound();
+            }
+
+            var likeRecord = _context.TbExhLike
+                .AsNoTracking()
+                .Include(i => i.Artwork)
+                .Where(i => i.Artwork.CreatorId == userId)
+                .GroupBy(i => new { i.ArtworkId, i.Artwork.Title })
+                .Select(g => new DashboardViewModel
+                {
+                    likeId = g.Select(i => i.LikeId).FirstOrDefault(),
+                    artId = g.Key.ArtworkId,
+                    artTitle = g.Key.Title,
+                    likeCount = g.Count()
+                })
+                .OrderByDescending(x => x.likeCount)
+                .ToList();
+
+            return Json(likeRecord);
         }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]

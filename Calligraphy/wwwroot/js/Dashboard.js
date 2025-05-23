@@ -6,10 +6,11 @@
         datatype: 'Json'
     },
     pagingType: "full_numbers",
+    pageLength: 5,
     fixedHeader: {
         header: true
     },
-    scrollY: 500,
+    scrollY: 200,
     language: {
         url: '//cdn.datatables.net/plug-ins/2.1.5/i18n/zh-HANT.json',
     },
@@ -27,7 +28,7 @@
             }
         },
         {
-            data: 'commentCreate',
+            data: 'commentCreate', width: '15%',
             render: function (data) {
                 //格式化時間
                 if (data) {
@@ -125,4 +126,31 @@ $(document).on('click', '.ReplyBtn', async function () {
 
     // 顯示模態框
     $('#ReplyModal').modal('show');
+});
+
+//按讚紀錄table
+$('#LikeTable').dataTable({
+    ajax: {
+        url: '/Home/LikeRecordJson',
+        type: 'GET',
+        dataSrc: "",  // 如果你的 JSON 根是數組，否則用 dataSrc: "data"
+        datatype: 'Json'
+    },
+    pagingType: "full_numbers",
+    pageLength: 5,
+    fixedHeader: {
+        header: true
+    },
+    scrollY: 200,
+    language: {
+        url: '//cdn.datatables.net/plug-ins/2.1.5/i18n/zh-HANT.json',
+    },
+    columns: [
+        { data: 'artTitle', width: '10%' },
+        {
+            data: 'likeCount',
+            className: 'text-start',
+            width: '10%'
+        },
+    ]
 });

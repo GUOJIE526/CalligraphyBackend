@@ -8,35 +8,56 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/material-components-web/14.0.0/material-components-web.min.css" rel="stylesheet" />
     <link href="https://cdn.datatables.net/2.1.7/css/dataTables.material.css" rel="stylesheet" />
 }
-
-<div class="card">
-    <div class="card-body">
-        <div class="d-block align-items-center">
-            <div>
-                <h4 class="card-title">@ViewData["Title"]</h4>
+<div>
+    <div class="card">
+        <div class="card-body">
+            <div class="d-block align-items-center">
+                <div>
+                    <h4 class="card-title">@ViewData["Title"]</h4>
+                </div>
+                <table id="DashboardTable" class="mdl-data-table table-hover text-center" style="width:30%">
+                    <thead class="text-nowrap">
+                        <tr>
+                            <th class="text-muted">
+                                @Html.DisplayNameFor(model => model.artTitle)
+                            </th>
+                            <th  class="text-muted">
+                                @Html.DisplayNameFor(model => model.comment)
+                            </th>
+                            <th  class="text-muted">
+                                @Html.DisplayNameFor(model => model.commentCreate)
+                            <th  class="text-muted">
+                                @Html.DisplayNameFor(model => model.reply)
+                            </th>
+                            <th  class="text-muted">
+                                回覆
+                            </th>
+                        </tr>
+                    </thead>
+                </table>
             </div>
-            <table id="DashboardTable" class="mdl-data-table table-hover text-center" style="width:100%">
-                <thead class="text-nowrap">
-                    <tr>
-                        <th scope="col" class="text-muted">
-                            @Html.DisplayNameFor(model => model.artTitle)
-                        </th>
-                        <th scope="col" class="text-muted">
-                            @Html.DisplayNameFor(model => model.comment)
-                        </th>
-                        <th scope="col" class="text-muted">
-                            @Html.DisplayNameFor(model => model.commentCreate)
-                        <th scope="col" class="text-muted">
-                            @Html.DisplayNameFor(model => model.reply)
-                        </th>
-                        <th scope="col" class="text-muted">
-                            回覆
-                        </th>
-                    </tr>
-                </thead>
-                <tbody>
-                </tbody>
-            </table>
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="card-body">
+            <div class="d-block align-items-center">
+                <div>
+                    <h4 class="card-title">按讚最多的作品</h4>
+                </div>
+                <table id="LikeTable" class="mdl-data-table table-hover text-center" style="width:100%">
+                    <thead class="text-nowrap">
+                        <tr>
+                            <th class="text-muted">
+                                @Html.DisplayNameFor(model => model.artTitle)
+                            </th>
+                            <th class="text-muted">
+                                @Html.DisplayNameFor(model => model.likeCount)
+                            </th>
+                        </tr>
+                    </thead>
+                </table>
+            </div>
         </div>
     </div>
 </div>

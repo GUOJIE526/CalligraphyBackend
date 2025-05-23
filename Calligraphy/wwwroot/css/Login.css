@@ -1,4 +1,7 @@
-﻿span{
+﻿*{
+    font-size: large;
+}
+span{
     color: red;
 }
 label{
@@ -7,13 +10,17 @@ label{
 .eye {
     cursor: pointer;
 }
+.logo{
+    display: flex;
+    justify-content: center;
+    padding: 2em;
+}
 /* From Uiverse.io by Praashoo7 */
 .login-background {
     min-height: 100%;
     display: flex;
     justify-content: center;
     align-items: center;
-    background-color: rgb(255, 255, 255); 
 }
 
 .form {
