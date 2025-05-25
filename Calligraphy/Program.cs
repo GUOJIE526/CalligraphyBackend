@@ -25,6 +25,10 @@ builder.Services.AddHttpContextAccessor();
 //註冊AuthHelper服務
 builder.Services.AddScoped<AuthHelper>();
 builder.Services.AddScoped<IEmailService, SmtpEmailService>();
+//註冊IP服務
+builder.Services.AddScoped<IClientIpService, GetClientIPService>();
+//註冊Log服務
+builder.Services.AddScoped<ILogService, LogService>();
 //驗證登入cookie
 builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
     .AddCookie(options =>

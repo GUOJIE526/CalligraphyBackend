@@ -1,4 +1,5 @@
 ﻿using Calligraphy.Models;
+using Calligraphy.Services.Interfaces;
 using Calligraphy.ViewModel;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
@@ -12,11 +13,12 @@ namespace Calligraphy.Controllers
     {
         private readonly ILogger<ArtController> _logger;
         private readonly CalligraphyContext _context;
-
-        public ArtController(ILogger<ArtController> logger, CalligraphyContext context)
+        private readonly IClientIpService _clientIp;
+        public ArtController(ILogger<ArtController> logger, CalligraphyContext context, IClientIpService clientIp)
         {
             _logger = logger;
             _context = context;
+            _clientIp = clientIp;
         }
 
         /// <summary>
@@ -87,7 +89,7 @@ namespace Calligraphy.Controllers
                     IsVisible = model.IsVisible,
                     Creator = User.Identity!.Name,
                     CreatorId = Guid.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!),
-                    CreateFrom = HttpContext.Connection.RemoteIpAddress?.ToString(),
+                    CreateFrom = _clientIp.GetClientIP(),
                 };
                 _context.TbExhArtwork.Add(art);
                 try

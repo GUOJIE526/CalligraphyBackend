@@ -1,4 +1,5 @@
 using Calligraphy.Models;
+using Calligraphy.Services.Interfaces;
 using Calligraphy.ViewModel;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
@@ -15,10 +16,12 @@ namespace Calligraphy.Controllers
     {
         private readonly ILogger<HomeController> _logger;
         private readonly CalligraphyContext _context;
-        public HomeController(ILogger<HomeController> logger, CalligraphyContext context)
+        private readonly IClientIpService _clientIp;
+        public HomeController(ILogger<HomeController> logger, CalligraphyContext context, IClientIpService clientIp)
         {
             _logger = logger;
             _context = context;
+            _clientIp = clientIp;
         }
 
         public IActionResult Dashboard()
@@ -188,7 +191,7 @@ namespace Calligraphy.Controllers
                 artwork.Material = model.Material;
                 artwork.Dimensions = model.Size;
                 artwork.Modifier = User.FindFirstValue(ClaimTypes.NameIdentifier);
-                artwork.ModifyFrom = HttpContext.Connection.RemoteIpAddress?.ToString();
+                artwork.ModifyFrom = _clientIp.GetClientIP();
                 _context.Update(artwork);
                 await _context.SaveChangesAsync();
             }
@@ -218,7 +221,7 @@ namespace Calligraphy.Controllers
             }
             artwork.IsVisible = model.IsVisible;
             artwork.Modifier = User.FindFirstValue(ClaimTypes.NameIdentifier)?.ToUpper();
-            artwork.ModifyFrom = HttpContext.Connection.RemoteIpAddress?.ToString();
+            artwork.ModifyFrom = _clientIp.GetClientIP();
             _context.Update(artwork);
             await _context.SaveChangesAsync();
             return Ok();

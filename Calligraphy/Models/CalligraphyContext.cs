@@ -240,7 +240,6 @@ public partial class CalligraphyContext : DbContext
 
             entity.HasOne(d => d.User).WithMany(p => p.TbExhLog)
                 .HasForeignKey(d => d.UserId)
-                .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK__TB_EXH_LO__USER___4D94879B");
         });
 

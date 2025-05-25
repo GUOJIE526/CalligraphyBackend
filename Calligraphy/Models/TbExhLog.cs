@@ -7,9 +7,9 @@ public partial class TbExhLog
 {
     public Guid LogId { get; set; }
 
-    public Guid UserId { get; set; }
+    public Guid? UserId { get; set; }
 
-    public string Action { get; set; } = null!;
+    public string? Action { get; set; }
 
     public string? TargetType { get; set; }
 
@@ -31,5 +31,5 @@ public partial class TbExhLog
 
     public string? Modifier { get; set; }
 
-    public virtual TbExhUser User { get; set; } = null!;
+    public virtual TbExhUser? User { get; set; }
 }

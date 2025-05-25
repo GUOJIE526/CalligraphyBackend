@@ -14,17 +14,17 @@ namespace Calligraphy.Controllers
     public class SignUpController : Controller
     {
         private readonly CalligraphyContext _context;
-        private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly AuthHelper _authHelper;
         private readonly IEmailService _emailService;
         private readonly ILogger<SignUpController> _logger;
-        public SignUpController(CalligraphyContext context, IHttpContextAccessor contextAccessor, AuthHelper authHelper, IEmailService emailService, ILogger<SignUpController> logger)
+        private readonly IClientIpService _clientIp;
+        public SignUpController(CalligraphyContext context, AuthHelper authHelper, IEmailService emailService, ILogger<SignUpController> logger, IClientIpService clientIp)
         {
             _context = context;
-            _httpContextAccessor = contextAccessor;
             _authHelper = authHelper;
             _emailService = emailService;
             _logger = logger;
+            _clientIp = clientIp;
         }
 
         /// <summary>
@@ -101,7 +101,7 @@ namespace Calligraphy.Controllers
                 ModelState.AddModelError("Name", "姓名含有系統保留字");
                 return View(model);
             }
-            string emaiToken = Guid.NewGuid().ToString();
+            string emailToken = Guid.NewGuid().ToString();
             var user = new TbExhUser
             {
                 Email = model.Email,
@@ -109,20 +109,20 @@ namespace Calligraphy.Controllers
                 PasswordHash = BCrypt.Net.BCrypt.HashPassword(model.Password),
                 Role = "Artist",//之後再想怎麼改成不寫死
                 Creator = model.Email,
-                CreateFrom = _httpContextAccessor.HttpContext?.Connection.RemoteIpAddress?.ToString(),
-                MailConfirmcode = emaiToken,
-                MailConfirmdate = DateTime.UtcNow.AddDays(1),
+                CreateFrom = _clientIp.GetClientIP(),
+                MailConfirmcode = emailToken,
+                MailConfirmdate = DateTime.UtcNow.AddMinutes(10),
             };
             _context.TbExhUser.Add(user);
             //建立驗證連結
-            var confirmLink = Url.Action("ConfirmEmail", "SignUp", new { token = emaiToken, email = model.Email }, Request.Scheme);
+            var confirmLink = Url.Action("ConfirmEmail", "SignUp", new { token = emailToken, email = model.Email }, Request.Scheme);
             try
             {
                 await _emailService.SendAsync(model.Email, "RuoliCalligraphy驗證信", $@"
                                                                                         <p>親愛的使用者您好，</p>
                                                                                         <p>請點擊以下連結以完成帳號驗證：</p>
                                                                                         <p><a href=""{confirmLink}"">{confirmLink}</a></p>
-                                                                                        <p>此連結將於 24 小時內失效。</p>");
+                                                                                        <p>此連結將於 10 分鐘內失效。</p>");
             }
             catch (TaskCanceledException)
             {
@@ -164,7 +164,7 @@ namespace Calligraphy.Controllers
                 return View("RegisterRemind");
             }
             user.MailConfirmcode = Guid.NewGuid().ToString();
-            user.MailConfirmdate = DateTime.UtcNow.AddDays(1);
+            user.MailConfirmdate = DateTime.UtcNow.AddMinutes(10);
             //建立驗證連結
             var confirmLink = Url.Action("ConfirmEmail", "SignUp", new { token = user.MailConfirmcode, email = user.Email }, Request.Scheme);
             try
@@ -173,7 +173,7 @@ namespace Calligraphy.Controllers
                                                                                         <p>親愛的使用者您好，</p>
                                                                                         <p>請點擊以下連結以完成帳號驗證：</p>
                                                                                         <p><a href=""{confirmLink}"">{confirmLink}</a></p>
-                                                                                        <p>此連結將於 24 小時內失效。</p>");
+                                                                                        <p>此連結將於 10 分鐘內失效。</p>");
             }
             catch (TaskCanceledException)
             {
@@ -238,7 +238,7 @@ namespace Calligraphy.Controllers
             }
             var resetToken = Guid.NewGuid().ToString();
             user.RestpwdToken = resetToken;
-            user.RestpwdLimitdate = DateTime.UtcNow.AddDays(1);
+            user.RestpwdLimitdate = DateTime.UtcNow.AddMinutes(10);
             user.RestpwdConfirm = false;
             //建立驗證連結
             var resetLink = Url.Action("ResetPassword", "SignUp", new { token = resetToken, email = user.Email }, Request.Scheme);
@@ -248,7 +248,7 @@ namespace Calligraphy.Controllers
                                                                                         <p>親愛的使用者您好，</p>
                                                                                         <p>請點擊以下連結以重設密碼：</p>
                                                                                         <p><a href=""{resetLink}"">{resetLink}</a></p>
-                                                                                        <p>此連結將於 24 小時內失效。</p>");
+                                                                                        <p>此連結將於 10 分鐘內失效。</p>");
             }
             catch (TaskCanceledException)
             {
