@@ -21,6 +21,7 @@ namespace Calligraphy.Services
             var remoteIp = context.Connection.RemoteIpAddress?.ToString();
             var forwardedFor = context.Request.Headers["X-Forwarded-For"].FirstOrDefault();
 
+            //讀取AppSettings.json的IPSource設定
             var configSection = _config.GetSection("IPSource");
             var enable = configSection.GetValue<bool>("Enabled");
             var trustIPs = configSection.GetValue<string>("TrustIPs")?.Split(',') ?? Array.Empty<string>();
@@ -31,6 +32,7 @@ namespace Calligraphy.Services
             {
                 if(trustIPs.Contains(remoteIp))
                 {
+                    //分割TrustIPs裡的所有IP, 判斷TrustIPs數量是否大於0, 是的話取第{ipDeth}個IP, 否則取最後一個IP
                     var ipList = forwardedFor.Split(',', ';').Select(ip => ip.Trim()).ToList();
                     ipResult = ipList.Count > ipDepth ? ipList[ipDepth] : ipList.LastOrDefault() ?? remoteIp;
 
