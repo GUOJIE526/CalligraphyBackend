@@ -6,7 +6,7 @@
         datatype: 'Json'
     },
     pagingType: "full_numbers",
-    pageLength: 5,
+    pageLength: 10,
     fixedHeader: {
         header: true
     },
@@ -137,7 +137,7 @@ $('#LikeTable').dataTable({
         datatype: 'Json'
     },
     pagingType: "full_numbers",
-    pageLength: 5,
+    pageLength: 10,
     fixedHeader: {
         header: true
     },
