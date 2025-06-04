@@ -1,138 +1,86 @@
-﻿@{
-    ViewData["Title"] = "Home Page";
+﻿@using Calligraphy.ViewModel
+@model IEnumerable<Calligraphy.ViewModel.DashboardViewModel>
+@{
+    ViewData["Title"] = "最新留言";
 }
 @section Styles {
     <link href="~/assets/css/styles.min.css" rel="stylesheet" />
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/material-components-web/14.0.0/material-components-web.min.css" rel="stylesheet" />
+    <link href="https://cdn.datatables.net/2.1.7/css/dataTables.material.css" rel="stylesheet" />
 }
-<div class="text-center">
-    <div class="col-12">
-        <div class="card">
-            <div class="card-body">
-                <div class="d-md-flex align-items-center">
-                    <div>
-                        <h4 class="card-title">最新留言</h4>
-                    </div>
+<div>
+    <div class="card">
+        <div class="card-body">
+            <div class="d-block align-items-center">
+                <div>
+                    <h4 class="card-title">@ViewData["Title"]</h4>
                 </div>
-                <div class="table-responsive mt-4">
-                    <table class="table mb-0 text-nowrap varient-table align-middle fs-3">
-                        <thead>
-                            <tr>
-                                <th scope="col" class="px-0 text-muted">
-                                    Assigned
-                                </th>
-                                <th scope="col" class="px-0 text-muted">Name</th>
-                                <th scope="col" class="px-0 text-muted">
-                                    Priority
-                                </th>
-                                <th scope="col" class="px-0 text-muted text-end">
-                                    Budget
-                                </th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td class="px-0">
-                                    <div class="d-flex align-items-center">
-                                        <img src="./assets/images/profile/user-3.jpg" class="rounded-circle" width="40"
-                                             alt="flexy" />
-                                        <div class="ms-3">
-                                            <h6 class="mb-0 fw-bolder">Sunil Joshi</h6>
-                                            <span class="text-muted">Web Designer</span>
-                                        </div>
-                                    </div>
-                                </td>
-                                <td class="px-0">Elite Admin</td>
-                                <td class="px-0">
-                                    <span class="badge bg-info">Low</span>
-                                </td>
-                                <td class="px-0 text-dark fw-medium text-end">
-                                    $3.9K
-                                </td>
-                            </tr>
-                            <tr>
-                                <td class="px-0">
-                                    <div class="d-flex align-items-center">
-                                        <img src="./assets/images/profile/user-5.jpg" class="rounded-circle" width="40"
-                                             alt="flexy" />
-                                        <div class="ms-3">
-                                            <h6 class="mb-0 fw-bolder">
-                                                Andrew McDownland
-                                            </h6>
-                                            <span class="text-muted">Project Manager</span>
-                                        </div>
-                                    </div>
-                                </td>
-                                <td class="px-0">Real Homes WP Theme</td>
-                                <td class="px-0">
-                                    <span class="badge text-bg-primary">Medium</span>
-                                </td>
-                                <td class="px-0 text-dark fw-medium text-end">
-                                    $24.5K
-                                </td>
-                            </tr>
-                            <tr>
-                                <td class="px-0">
-                                    <div class="d-flex align-items-center">
-                                        <img src="./assets/images/profile/user-6.jpg" class="rounded-circle" width="40"
-                                             alt="flexy" />
-                                        <div class="ms-3">
-                                            <h6 class="mb-0 fw-bolder">
-                                                Christopher Jamil
-                                            </h6>
-                                            <span class="text-muted">SEO Manager</span>
-                                        </div>
-                                    </div>
-                                </td>
-                                <td class="px-0">MedicalPro WP Theme</td>
-                                <td class="px-0">
-                                    <span class="badge bg-warning">Hight</span>
-                                </td>
-                                <td class="px-0 text-dark fw-medium text-end">
-                                    $12.8K
-                                </td>
-                            </tr>
-                            <tr>
-                                <td class="px-0">
-                                    <div class="d-flex align-items-center">
-                                        <img src="./assets/images/profile/user-7.jpg" class="rounded-circle" width="40"
-                                             alt="flexy" />
-                                        <div class="ms-3">
-                                            <h6 class="mb-0 fw-bolder">Nirav Joshi</h6>
-                                            <span class="text-muted">Frontend Engineer</span>
-                                        </div>
-                                    </div>
-                                </td>
-                                <td class="px-0">Hosting Press HTML</td>
-                                <td class="px-0">
-                                    <span class="badge bg-danger">Low</span>
-                                </td>
-                                <td class="px-0 text-dark fw-medium text-end">
-                                    $2.4K
-                                </td>
-                            </tr>
-                            <tr>
-                                <td class="px-0">
-                                    <div class="d-flex align-items-center">
-                                        <img src="./assets/images/profile/user-8.jpg" class="rounded-circle" width="40"
-                                             alt="flexy" />
-                                        <div class="ms-3">
-                                            <h6 class="mb-0 fw-bolder">Micheal Doe</h6>
-                                            <span class="text-muted">Content Writer</span>
-                                        </div>
-                                    </div>
-                                </td>
-                                <td class="px-0">Helping Hands WP Theme</td>
-                                <td class="px-0">
-                                    <span class="badge bg-success">Low</span>
-                                </td>
-                                <td class="px-0 text-dark fw-medium text-end">
-                                    $9.3K
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
+                <table id="DashboardTable" class="mdl-data-table table-hover text-center" style="width:30%">
+                    <thead class="text-nowrap">
+                        <tr>
+                            <th class="text-muted">
+                                @Html.DisplayNameFor(model => model.artTitle)
+                            </th>
+                            <th  class="text-muted">
+                                @Html.DisplayNameFor(model => model.comment)
+                            </th>
+                            <th  class="text-muted">
+                                @Html.DisplayNameFor(model => model.commentCreate)
+                            <th  class="text-muted">
+                                @Html.DisplayNameFor(model => model.reply)
+                            </th>
+                            <th  class="text-muted">
+                                回覆
+                            </th>
+                        </tr>
+                    </thead>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="card-body">
+            <div class="d-block align-items-center">
+                <div>
+                    <h4 class="card-title">按讚最多的作品</h4>
                 </div>
+                <table id="LikeTable" class="mdl-data-table table-hover text-center" style="width:100%">
+                    <thead class="text-nowrap">
+                        <tr>
+                            <th class="text-muted">
+                                @Html.DisplayNameFor(model => model.artTitle)
+                            </th>
+                            <th class="text-muted">
+                                @Html.DisplayNameFor(model => model.likeCount)
+                            </th>
+                        </tr>
+                    </thead>
+                </table>
             </div>
         </div>
     </div>
 </div>
+
+<!--回覆視窗-->
+<div class="modal fade" id="ReplyModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">回覆</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body Reply">
+                ...
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts{
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/material-components-web/14.0.0/material-components-web.min.js"></script>
+    <script src="https://cdn.datatables.net/2.1.7/js/dataTables.js"></script>
+    <script src="https://cdn.datatables.net/2.1.7/js/dataTables.material.js"></script>
+    <script src="https://cdn.datatables.net/fixedheader/3.3.2/js/dataTables.fixedHeader.min.js"></script>
+    <script src="~/js/dashboard.js" asp-append-version="true"></script>
+}

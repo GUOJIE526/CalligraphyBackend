@@ -22,19 +22,19 @@ namespace Calligraphy.Services
         public async Task SignInUserAsync(TbExhUser exhUser, bool rememberMe)
         {
             //先檢查IP是信任
-            var remoteIp = _httpContextAccessor.HttpContext!.Connection.RemoteIpAddress?.ToString();
-            if (!_clientIp.IsTrustedIP(remoteIp!))
-            {
-                //記錄未授權的登入嘗試
-                await _logService.LogAsync(
-                        exhUser.UserId,
-                        "未授權登入嘗試",
-                        $"IP {remoteIp} 不在信任列表中",
-                        remoteIp!
-                    );
+            //var remoteIp = _httpContextAccessor.HttpContext!.Connection.RemoteIpAddress?.ToString();
+            //if (!_clientIp.IsTrustedIP(remoteIp!))
+            //{
+            //    //記錄未授權的登入嘗試
+            //    await _logService.LogAsync(
+            //            exhUser.UserId,
+            //            "未授權登入嘗試",
+            //            $"IP {remoteIp} 不在信任列表中",
+            //            remoteIp!
+            //        );
 
-                throw new UnauthorizedAccessException("IP不在信任列表中，無法登入。");
-            }
+            //    throw new UnauthorizedAccessException("IP不在信任列表中，無法登入。");
+            //}
 
             var claims = new List<Claim>
             {

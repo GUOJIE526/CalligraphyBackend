@@ -12,7 +12,7 @@
     },
     scrollY: 200,
     language: {
-        url: '//cdn.datatables.net/plug-ins/2.1.5/i18n/zh-HANT.json',
+        url: 'https://cdn.datatables.net/plug-ins/2.1.5/i18n/zh-HANT.json',
     },
     columns: [
         { data: 'artTitle' },
@@ -143,7 +143,7 @@ $('#LikeTable').dataTable({
     },
     scrollY: 200,
     language: {
-        url: '//cdn.datatables.net/plug-ins/2.1.5/i18n/zh-HANT.json',
+        url: 'https://cdn.datatables.net/plug-ins/2.1.5/i18n/zh-HANT.json',
     },
     columns: [
         { data: 'artTitle', width: '10%' },

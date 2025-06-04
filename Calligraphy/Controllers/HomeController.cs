@@ -24,7 +24,7 @@ namespace Calligraphy.Controllers
             _clientIp = clientIp;
         }
 
-        public IActionResult Dashboard()
+        public IActionResult Index()
         {
             var newComment = _context.TbExhComment
                 .AsNoTracking()

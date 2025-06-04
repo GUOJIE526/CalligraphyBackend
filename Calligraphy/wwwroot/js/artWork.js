@@ -11,7 +11,7 @@
     },
     scrollY: 350,
     language: {
-        url: '//cdn.datatables.net/plug-ins/2.1.5/i18n/zh-HANT.json',
+        url: 'https://cdn.datatables.net/plug-ins/2.1.5/i18n/zh-HANT.json',
     },
     columns: [
         { data: 'title' },
@@ -85,6 +85,7 @@ $(document).on('change', '.toggle-visible', async function () {
 })
 
 let table = new DataTable('#ArtTable')
+const imgCache = new Map();// 用來緩存圖片的 Map
 table.on('click', 'tbody tr', async function (e) {
     //如果點的是按鈕或是他的子元素直接return
     if ($(e.target).is('.EditBtn') || $(e.target).is('.toggle-visible') || $(e.target).closest('.EditBtn').length > 0) return;
@@ -101,11 +102,26 @@ table.on('click', 'tbody tr', async function (e) {
         },
         body: JSON.stringify(id),
     });
-    if (response.ok) {
-        let result = await response.json(); // 解析為 JSON
+    debugger;
+    //檢查快取有沒有圖
+    if (imgCache.has(id)) {
+        const imgUrl = imgCache.get(id);
         //清空圖片
         $('#PicModal .Picture').empty();
-        let Img = `<img src="${result.artImage}" alt="${data[0]}" class="img-fluid" />`;
+        let Img = `<img src="${imgUrl}" alt="${data[0]}" class="img-fluid" loading="lazy" style="max-width:100%; height:auto;" />`;
+        //動態插入圖片
+        $('.Picture').html(Img);
+        $('#PicModal').modal('show'); // 顯示模態框
+        return;
+    }
+
+    if (response.ok) {
+        let result = await response.json(); // 解析為 JSON
+        //存圖片進去imgCache
+        imgCache.set(id, result.artImage);
+        //清空圖片
+        $('#PicModal .Picture').empty();
+        let Img = `<img src="${result.artImage}" alt="${data[0]}" class="img-fluid" loading="lazy" style="max-width:100%; height:auto;" />`;
         //動態插入圖片
         $('.Picture').html(Img);
         $('#PicModal').modal('show'); // 顯示模態框

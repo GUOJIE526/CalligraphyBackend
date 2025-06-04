@@ -21,8 +21,8 @@ builder.Services.AddDbContext<CalligraphyContext>(options =>
 // 註冊資料庫開發人員例外頁面過濾器（開發時顯示詳細錯誤）
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
-//builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
-//    .AddEntityFrameworkStores<ApplicationDbContext>();
+builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
+    .AddEntityFrameworkStores<ApplicationDbContext>();
 
 // 註冊 MVC 控制器與視圖服務（Razor Pages 專案通常也會用到）
 builder.Services.AddControllersWithViews();
@@ -77,7 +77,7 @@ app.UseAuthorization();
 
 app.MapControllerRoute(
     name: "default",
-    pattern: "{controller=Home}/{action=Dashboard}/{id?}");
-//app.MapRazorPages();
+    pattern: "{controller=Home}/{action=Index}/{id?}");
+app.MapRazorPages();
 
 app.Run();
