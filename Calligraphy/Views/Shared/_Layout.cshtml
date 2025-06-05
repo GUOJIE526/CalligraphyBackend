@@ -66,16 +66,16 @@
                                 <i class="ti ti-menu-2"></i>
                             </a>
                         </li>
-                        <li class="navbar-nav">
-                            @{
-                                //顯示現在登入者名稱
-                                var userName = User.Identity?.Name ?? "";
-                                <span>Hi~ @userName</span>
-                            }
-                        </li>
                     </ul>
                     <div class="navbar-collapse justify-content-end px-0" id="navbarNav">
                         <ul class="navbar-nav flex-row ms-auto align-items-center justify-content-end">
+                            <li>
+                                @{
+                                    //顯示現在登入者名稱
+                                    var userName = User.Identity?.Name ?? "";
+                                    <span>Hi~ <span class="text-danger">@userName</span></span>
+                                }
+                            </li>
                             <li>
                                 <a asp-area="" asp-controller="SignUp" asp-action="Logout" class="btn btn-outline-primary mx-3 mt-2 d-block">Logout</a>
                             </li>
