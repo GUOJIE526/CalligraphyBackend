@@ -93,16 +93,7 @@ table.on('click', 'tbody tr', async function (e) {
     //取得該row的Id
     let data = table.row(this).data();
     let id = data.artworkId; // 獲取該筆資料的 ID
-    let response = await fetch(`/Home/ArtWorkImages/${id}`, {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-            'X-Requested-With': 'XMLHttpRequest',  // 用來標示這是一個 AJAX 請求
-            'RequestVerificationToken': $('input[name="__RequestVerificationToken"]').val()  // 防護 token
-        },
-        body: JSON.stringify(id),
-    });
-    debugger;
+
     //檢查快取有沒有圖
     if (imgCache.has(id)) {
         const imgUrl = imgCache.get(id);
@@ -114,6 +105,16 @@ table.on('click', 'tbody tr', async function (e) {
         $('#PicModal').modal('show'); // 顯示模態框
         return;
     }
+
+    let response = await fetch(`/Home/ArtWorkImages/${id}`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-Requested-With': 'XMLHttpRequest',  // 用來標示這是一個 AJAX 請求
+            'RequestVerificationToken': $('input[name="__RequestVerificationToken"]').val()  // 防護 token
+        },
+        body: JSON.stringify(id),
+    });
 
     if (response.ok) {
         let result = await response.json(); // 解析為 JSON
