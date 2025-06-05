@@ -13,7 +13,7 @@ namespace Calligraphy.Services
             _logger = logger;
         }
         //實作Log紀錄儲存
-        public async Task LogAsync(Guid userId, string action, string message, string ip)
+        public async Task LogAsync(Guid userId, string action, string message, string ip, string createIP)
         {
             var log = new TbExhLog
             {
@@ -21,6 +21,7 @@ namespace Calligraphy.Services
                 Action = action,
                 Message = message,
                 IpAddress = ip,
+                CreateFrom = createIP
             };
             try
             {

@@ -14,11 +14,14 @@ namespace Calligraphy.Controllers
         private readonly ILogger<ArtController> _logger;
         private readonly CalligraphyContext _context;
         private readonly IClientIpService _clientIp;
-        public ArtController(ILogger<ArtController> logger, CalligraphyContext context, IClientIpService clientIp)
+        private readonly ILogService _log;
+
+        public ArtController(ILogger<ArtController> logger, CalligraphyContext context, IClientIpService clientIp, ILogService log)
         {
             _logger = logger;
             _context = context;
             _clientIp = clientIp;
+            _log = log;
         }
 
         /// <summary>
@@ -54,6 +57,8 @@ namespace Calligraphy.Controllers
                     {
                         // 處理檔案儲存錯誤
                         ModelState.AddModelError("File", "檔案上傳失敗: " + ex.Message);
+                        var user = await _context.TbExhUser.FindAsync(User.FindFirstValue(ClaimTypes.NameIdentifier));
+                        await _log.LogAsync(user!.UserId, filePath, "檔案上傳失敗", _clientIp.GetClientIP(), _clientIp.GetClientIP());
                         return View(model);
                     }
                 }
@@ -102,6 +107,7 @@ namespace Calligraphy.Controllers
                 {
                     // 處理資料庫儲存錯誤
                     _logger.LogError(ex, "資料庫儲存失敗: {Message}", ex.Message);
+                    await _log.LogAsync(Guid.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!), "ArtController.ArtUpload", ex.Message, _clientIp.GetClientIP(), _clientIp.GetClientIP());
                     return View("ArtUpload");
                 }
             }

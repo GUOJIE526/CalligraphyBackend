@@ -18,13 +18,16 @@ namespace Calligraphy.Controllers
         private readonly IEmailService _emailService;
         private readonly ILogger<SignUpController> _logger;
         private readonly IClientIpService _clientIp;
-        public SignUpController(CalligraphyContext context, AuthHelper authHelper, IEmailService emailService, ILogger<SignUpController> logger, IClientIpService clientIp)
+        private readonly ILogService _log;
+
+        public SignUpController(CalligraphyContext context, AuthHelper authHelper, IEmailService emailService, ILogger<SignUpController> logger, IClientIpService clientIp, ILogService log)
         {
             _context = context;
             _authHelper = authHelper;
             _emailService = emailService;
             _logger = logger;
             _clientIp = clientIp;
+            _log = log;
         }
 
         /// <summary>
@@ -111,24 +114,26 @@ namespace Calligraphy.Controllers
                 Creator = model.Email,
                 CreateFrom = _clientIp.GetClientIP(),
                 MailConfirmcode = emailToken,
-                MailConfirmdate = DateTime.UtcNow.AddMinutes(10),
+                MailConfirmdate = DateTime.Now.AddMinutes(10),
             };
             _context.TbExhUser.Add(user);
             //建立驗證連結
             var confirmLink = Url.Action("ConfirmEmail", "SignUp", new { token = emailToken, email = model.Email }, Request.Scheme);
             try
             {
+                await _context.SaveChangesAsync();
                 await _emailService.SendAsync(model.Email, "RuoliCalligraphy驗證信", $@"
                                                                                         <p>親愛的使用者您好，</p>
                                                                                         <p>請點擊以下連結以完成帳號驗證：</p>
                                                                                         <p><a href=""{confirmLink}"">{confirmLink}</a></p>
                                                                                         <p>此連結將於 10 分鐘內失效。</p>");
+                await _log.LogAsync(user.UserId, "Register", $"使用者 {user.DisplayName} ({user.Email}) 註冊成功", _clientIp.GetClientIP(), _clientIp.GetClientIP());
             }
             catch (TaskCanceledException)
             {
                 _logger.LogError("Email sending timed out.");
+                await _log.LogAsync(user.UserId, "RegisterError", $"使用者 {user.DisplayName} ({user.Email}) 註冊時發生錯誤: 郵件發送超時", _clientIp.GetClientIP(), _clientIp.GetClientIP());
             }
-            await _context.SaveChangesAsync();
             return RedirectToAction("RegisterRemind", "SignUp", new {email = user.Email});
         }
 
@@ -164,22 +169,24 @@ namespace Calligraphy.Controllers
                 return View("RegisterRemind");
             }
             user.MailConfirmcode = Guid.NewGuid().ToString();
-            user.MailConfirmdate = DateTime.UtcNow.AddMinutes(10);
+            user.MailConfirmdate = DateTime.Now.AddMinutes(10);
             //建立驗證連結
             var confirmLink = Url.Action("ConfirmEmail", "SignUp", new { token = user.MailConfirmcode, email = user.Email }, Request.Scheme);
             try
             {
+                await _context.SaveChangesAsync();
                 await _emailService.SendAsync(user.Email, "RuoliCalligraphy驗證信", $@"
                                                                                         <p>親愛的使用者您好，</p>
                                                                                         <p>請點擊以下連結以完成帳號驗證：</p>
                                                                                         <p><a href=""{confirmLink}"">{confirmLink}</a></p>
                                                                                         <p>此連結將於 10 分鐘內失效。</p>");
+                await _log.LogAsync(user.UserId, "ResendConfirmEmail", $"使用者 {user.DisplayName} ({user.Email}) 重新寄送驗證信", _clientIp.GetClientIP(), _clientIp.GetClientIP());
             }
             catch (TaskCanceledException)
             {
                 _logger.LogError("Email sending timed out.");
+                await _log.LogAsync(user.UserId, "ResendConfirmEmailError", $"使用者 {user.DisplayName} ({user.Email}) 重新寄送驗證信時發生錯誤: 郵件發送超時", _clientIp.GetClientIP(), _clientIp.GetClientIP());
             }
-            await _context.SaveChangesAsync();
             TempData["ResendMessage"] = true;
             return RedirectToAction("RegisterRemind", "SignUp", new { email = user.Email });
         }
@@ -194,7 +201,7 @@ namespace Calligraphy.Controllers
         {
             var user = await _context.TbExhUser
                 .FirstOrDefaultAsync(u => u.MailConfirmcode == token && u.Email == email);
-            if (user == null || user.MailConfirmdate < DateTime.UtcNow)
+            if (user == null || user.MailConfirmdate < DateTime.Now)
             {
                 TempData["ConfirmError"] = true;
                 return RedirectToAction("Error");
@@ -238,12 +245,13 @@ namespace Calligraphy.Controllers
             }
             var resetToken = Guid.NewGuid().ToString();
             user.RestpwdToken = resetToken;
-            user.RestpwdLimitdate = DateTime.UtcNow.AddMinutes(10);
+            user.RestpwdLimitdate = DateTime.Now.AddMinutes(10);
             user.RestpwdConfirm = false;
             //建立驗證連結
             var resetLink = Url.Action("ResetPassword", "SignUp", new { token = resetToken, email = user.Email }, Request.Scheme);
             try
             {
+                await _context.SaveChangesAsync();
                 await _emailService.SendAsync(user.Email, "RuoliCalligraphy密碼重設信", $@"
                                                                                         <p>親愛的使用者您好，</p>
                                                                                         <p>請點擊以下連結以重設密碼：</p>
@@ -253,8 +261,8 @@ namespace Calligraphy.Controllers
             catch (TaskCanceledException)
             {
                 _logger.LogError("Email sending timed out.");
+                await _log.LogAsync(user.UserId, "ForgotPasswordError", $"使用者 {user.DisplayName} ({user.Email}) 忘記密碼時發生錯誤: 郵件發送超時", _clientIp.GetClientIP(), _clientIp.GetClientIP());
             }
-            await _context.SaveChangesAsync();
             TempData["ForgotPassword"] = true;
             return RedirectToAction("ForgotPassword", "SignUp");
         }
@@ -272,7 +280,7 @@ namespace Calligraphy.Controllers
                 ViewBag.Token = user.RestpwdToken;
                 ViewBag.Name = user.DisplayName;
                 ViewBag.Email = user.Email;
-                if (user.RestpwdLimitdate < DateTime.UtcNow)
+                if (user.RestpwdLimitdate < DateTime.Now)
                 {
                     TempData["LimitError"] = true;
                     return RedirectToAction("Error");
@@ -296,28 +304,51 @@ namespace Calligraphy.Controllers
         {
             var user = await _context.TbExhUser
                 .FirstOrDefaultAsync(u => u.RestpwdToken == model.Token && u.Email == model.Email);
-            if (user == null || user.MailConfirmdate < DateTime.UtcNow)
+            if (user != null)
             {
-                ModelState.AddModelError("email", "連結已失效或使用者不存在");
-                return View();
+                ViewBag.Name = user.DisplayName;
+                ViewBag.Email = user.Email;
+                ViewBag.Token = user.RestpwdToken;
             }
+            //檢查用戶是否存在, 驗證時間是否過期
+            if (user == null || user.RestpwdLimitdate < DateTime.Now)
+            {
+                ModelState.AddModelError("", "連結已失效或使用者不存在");
+                return View("ResetPassword", model);
+            }
+            //檢查密碼是否一致
             if (model.Password != model.ConfirmPassword)
             {
-                ModelState.AddModelError("ConfirmPassword", "密碼不一致");
-                return View();
+                ModelState.AddModelError("", "密碼不一致");
+                return View("ResetPassword", model);
+            }
+            //檢查密碼是否為空
+            if (string.IsNullOrEmpty(model.Password) || string.IsNullOrEmpty(model.ConfirmPassword))
+            {
+                ModelState.AddModelError("", "密碼不可為空");
+                return View("ResetPassword", model);
+            }
+            //檢查密碼是否與之前的密碼相同
+            if (BCrypt.Net.BCrypt.Verify(model.Password, user.PasswordHash))
+            {
+                ModelState.AddModelError("", "不能與前次密碼相同");
+                return View("ResetPassword", model);
             }
             user.PasswordHash = BCrypt.Net.BCrypt.HashPassword(model.Password);
             user.RestpwdConfirm = true;
+            //存log紀錄
             string token = model.Token;
             string email = model.Email;
             try
             {
                 await _context.SaveChangesAsync();
+                await _log.LogAsync(user.UserId, "ResetPassword", $"使用者 {user.DisplayName} ({user.Email}) 重設密碼", _clientIp.GetClientIP(), _clientIp.GetClientIP());
             }
             catch(DbUpdateConcurrencyException ex)
             {
                 _logger.LogError(ex, "Error updating user password");
                 ModelState.AddModelError("ConfirmPassword", "更新密碼失敗，請稍後再試");
+                await _log.LogAsync(user.UserId, "ResetPasswordError", $"使用者 {user.DisplayName} ({user.Email}) 重設密碼失敗: {ex.Message}", _clientIp.GetClientIP(), _clientIp.GetClientIP());
                 return View();
             }
             return RedirectToAction("ResetPassword", "SignUp", new { token, email });
