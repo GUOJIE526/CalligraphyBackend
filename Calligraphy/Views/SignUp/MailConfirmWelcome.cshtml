@@ -15,7 +15,7 @@
         <p>現在您可以使用您的帳號登入並開始使用我們的服務。</p>
         <p>如果您有任何問題或需要幫助，請隨時聯繫我們的客服團隊。</p>
         <p><span>5</span>秒後將自動轉跳</p>
-        <p>如果沒有自動轉跳，請點擊<a href="@Url.Action("Dashboard", "Home")"> (這裡) </a></p>
+        <p>如果沒有自動轉跳，請點擊<a href="@Url.Action("Index", "Home")"> (這裡) </a></p>
         <!-- From Uiverse.io by AbanoubMagdy1 -->
         <div class="loader mt-2">
             <div class="circle"></div>
@@ -28,7 +28,7 @@
 
 <script type="text/javascript">
     setTimeout(function () {
-        window.location.href = '@Url.Action("Dashboard", "Home")';
+        window.location.href = '@Url.Action("Index", "Home")';
     }, 5000); //  5seconds
 
     //倒數5秒
