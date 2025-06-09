@@ -96,41 +96,6 @@ table.on('click', 'tbody tr', async function (e) {
     let id = data.artWorkId; // 獲取該筆資料的 ID
 
     await fetchImage(id, data.title); // 使用 showImg.js 中的函數來顯示圖片
-//    //檢查快取有沒有圖
-//    if (imgCache.has(id)) {
-//        const imgUrl = imgCache.get(id);
-//        //清空圖片
-//        $('#PicModal .Picture').empty();
-//        let Img = `<img src="${imgUrl}" alt="${data[0]}" class="img-fluid" loading="lazy" style="max-width:100%; height:auto;" />`;
-//        //動態插入圖片
-//        $('.Picture').html(Img);
-//        $('#PicModal').modal('show'); // 顯示模態框
-//        return;
-//    }
-
-//    let response = await fetch(`/Art/ArtWorkImages/${id}`, {
-//        method: 'POST',
-//        headers: {
-//            'Content-Type': 'application/json',
-//            'X-Requested-With': 'XMLHttpRequest',  // 用來標示這是一個 AJAX 請求
-//            'RequestVerificationToken': $('input[name="__RequestVerificationToken"]').val()  // 防護 token
-//        },
-//        body: JSON.stringify(id),
-//    });
-
-//    if (response.ok) {
-//        let result = await response.json(); // 解析為 JSON
-//        //存圖片進去imgCache
-//        imgCache.set(id, result.artImage);
-//        //清空圖片
-//        $('#PicModal .Picture').empty();
-//        let Img = `<img src="${result.artImage}" alt="${data[0]}" class="img-fluid" loading="lazy" style="max-width:100%; height:auto;" />`;
-//        //動態插入圖片
-//        $('.Picture').html(Img);
-//        $('#PicModal').modal('show'); // 顯示模態框
-//    } else {
-//        alert('Not Found!');
-//    }
 });
 
 //動態加載reply內容
@@ -146,8 +111,6 @@ $(document).on('click', '.EditBtn', async function () {
         // 將表單序列化
         let formData = new FormData(this);  // 使用 FormData 獲取表單數據
         // 使用 fetch 發送 POST 請求
-        console.log($(this).attr('action'));
-
         let fetchResponse = await fetch($(this).attr('action'), {
             method: 'POST',
             body: formData,

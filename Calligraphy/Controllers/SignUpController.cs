@@ -126,6 +126,8 @@ namespace Calligraphy.Controllers
                                                                                         <p>請點擊以下連結以完成帳號驗證：</p>
                                                                                         <p><a href=""{confirmLink}"">{confirmLink}</a></p>
                                                                                         <p>此連結將於 10 分鐘內失效。</p>");
+                //通知我有人註冊帳號
+                await _emailService.SendAsync("hungkaojay@gmail.com", "有人註冊RuoliBackend", $"<p>{model.Email} 註冊新帳號</p>");
                 await _log.LogAsync(user.UserId, "Register", $"使用者 {user.DisplayName} ({user.Email}) 註冊成功", _clientIp.GetClientIP());
             }
             catch (TaskCanceledException)

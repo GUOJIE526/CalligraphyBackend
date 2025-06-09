@@ -82,7 +82,6 @@ $(document).on('click', '.ReplyBtn', async function () {
     let response = await fetch(`/Home/ReplyPartial/${id}`);
     let partialView = await response.text();  // 讀取返回的 HTML 內容
     $('.Reply').html(partialView);  // 動態插入到指定區域
-    console.log(id);
     // 綁定表單提交事件
     $(document).off('submit', '#ReplyForm').on('submit', '#ReplyForm', async function (e) {
         e.preventDefault(); // 防止默認提交行為
@@ -90,8 +89,6 @@ $(document).on('click', '.ReplyBtn', async function () {
         // 將表單序列化
         let formData = new FormData(this);  // 使用 FormData 獲取表單數據
         // 使用 fetch 發送 POST 請求
-        console.log($(this).attr('action'));
-
         let fetchResponse = await fetch($(this).attr('action'), {
             method: 'POST',
             body: formData,
