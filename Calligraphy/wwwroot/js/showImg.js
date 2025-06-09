@@ -1,6 +1,5 @@
 ﻿const imgCache = new Map();// 用來緩存圖片的 Map
 export async function fetchImage(id, dataAlt) {
-    debugger;
     if (imgCache.has(id)) {
         showImgModel(imgCache.get(id), dataAlt);
         return;

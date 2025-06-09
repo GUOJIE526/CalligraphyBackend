@@ -50,7 +50,7 @@ $('#ArtTable').dataTable({
             render: function (data, type, row) {
                 //以checkbox顯示bool值
                 const checked = data ? 'checked' : '';
-                return `<input class="toggle-visible" type="checkbox" data-id="${row.artworkId}" ${checked}>`;
+                return `<input class="toggle-visible" type="checkbox" data-id="${row.artWorkId}" ${checked}>`;
             }
         },
         {
