@@ -4,7 +4,7 @@ namespace Calligraphy.ViewModel
 {
     public class ArtWorkViewModel
     {
-        public Guid ArtworkId { get; set; }
+        public Guid ArtWorkId { get; set; }
 
         [Required(ErrorMessage = "請輸入作品名稱")]
         [Display( Name = "作品")]

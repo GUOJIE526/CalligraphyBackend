@@ -48,7 +48,6 @@ public partial class CalligraphyContext : DbContext
             entity.Property(e => e.Creator)
                 .HasMaxLength(50)
                 .HasColumnName("CREATOR");
-            entity.Property(e => e.CreatorId).HasColumnName("CREATOR_ID");
             entity.Property(e => e.Description).HasColumnName("DESCRIPTION");
             entity.Property(e => e.Dimensions)
                 .HasMaxLength(50)
@@ -76,15 +75,15 @@ public partial class CalligraphyContext : DbContext
             entity.Property(e => e.Title)
                 .HasMaxLength(200)
                 .HasColumnName("TITLE");
-
-            entity.HasOne(d => d.CreatorNavigation).WithMany(p => p.TbExhArtwork)
-                .HasForeignKey(d => d.CreatorId)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK_ARTWORK_CREATOR");
+            entity.Property(e => e.Writer).HasColumnName("WRITER");
 
             entity.HasOne(d => d.Exhibition).WithMany(p => p.TbExhArtwork)
                 .HasForeignKey(d => d.ExhibitionId)
                 .HasConstraintName("FK__TB_EXH_AR__EXHIB__412EB0B6");
+
+            entity.HasOne(d => d.WriterNavigation).WithMany(p => p.TbExhArtwork)
+                .HasForeignKey(d => d.Writer)
+                .HasConstraintName("FK_ARTWORK_CREATOR");
         });
 
         modelBuilder.Entity<TbExhComment>(entity =>

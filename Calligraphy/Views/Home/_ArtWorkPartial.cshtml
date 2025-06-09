@@ -4,10 +4,10 @@
 <hr />
 <div class="row">
     <div class="col-lg-12">
-        <form asp-action="EditArtWork" id="EditForm" method="post" asp-route-id="@Model.ArtworkId">
+        <form asp-action="EditArtWork" id="EditForm" method="post" asp-route-id="@Model.ArtWorkId">
             @Html.AntiForgeryToken()
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <input type="hidden" asp-for="ArtworkId" />
+            <input type="hidden" asp-for="ArtWorkId" />
             <div class="form-group">
                 <label asp-for="Title" class="control-label"></label>
                 <input asp-for="Title" class="form-control" />

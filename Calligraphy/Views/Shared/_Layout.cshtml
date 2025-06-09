@@ -69,12 +69,20 @@
                     </ul>
                     <div class="navbar-collapse justify-content-end px-0" id="navbarNav">
                         <ul class="navbar-nav flex-row ms-auto align-items-center justify-content-end">
-                            <li>
+                            <li class="nav-item dropdown">
                                 @{
-                                    //顯示現在登入者名稱
                                     var userName = User.Identity?.Name ?? "";
-                                    <span>Hi~ <span class="text-danger">@userName</span></span>
                                 }
+                                <a class="nav-link text-danger" style="font-weight:bold;" href="javascript:void(0)" id="drop1" data-bs-toggle="dropdown" aria-expanded="false">
+                                    @userName
+                                </a>
+                                <div class="dropdown-menu dropdown-menu-animate-up" aria-labelledby="drop1">
+                                    <div class="message-body">
+                                        <a href="@Url.Action("ChangeProfile", "SignUp")" class="dropdown-item">
+                                            變更基本資料
+                                        </a>
+                                    </div>
+                                </div>
                             </li>
                             <li>
                                 <a asp-area="" asp-controller="SignUp" asp-action="Logout" class="btn btn-outline-primary mx-3 mt-2 d-block">Logout</a>

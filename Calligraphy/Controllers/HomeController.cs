@@ -17,11 +17,14 @@ namespace Calligraphy.Controllers
         private readonly ILogger<HomeController> _logger;
         private readonly CalligraphyContext _context;
         private readonly IClientIpService _clientIp;
-        public HomeController(ILogger<HomeController> logger, CalligraphyContext context, IClientIpService clientIp)
+        private readonly ILogService _log;
+        
+        public HomeController(ILogger<HomeController> logger, CalligraphyContext context, IClientIpService clientIp, ILogService log)
         {
             _logger = logger;
             _context = context;
             _clientIp = clientIp;
+            _log = log;
         }
 
         public IActionResult Index()
@@ -29,7 +32,7 @@ namespace Calligraphy.Controllers
             var newComment = _context.TbExhComment
                 .AsNoTracking()
                 .Include(c => c.Artwork)
-                .Where(c => !string.IsNullOrEmpty(c.Message) && c.Artwork.CreatorId == Guid.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier))).Select(c => new DashboardViewModel
+                .Where(c => !string.IsNullOrEmpty(c.Message) && c.Artwork.Creator == User.FindFirstValue(ClaimTypes.NameIdentifier)).Select(c => new DashboardViewModel
                 {
                     dashId = c.CommentId,
                     artTitle = c.Artwork.Title,
@@ -57,9 +60,10 @@ namespace Calligraphy.Controllers
             var newComment = _context.TbExhComment
                 .AsNoTracking()
                 .Include(c => c.Artwork)
-                .Where(c => !string.IsNullOrEmpty(c.Message) && c.Artwork.CreatorId == Guid.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier))).Select(c => new DashboardViewModel
+                .Where(c => !string.IsNullOrEmpty(c.Message) && c.Artwork.Creator == User.FindFirstValue(ClaimTypes.NameIdentifier)).Select(c => new DashboardViewModel
                 {
                     dashId = c.CommentId,
+                    artWorkId = c.Artwork.ArtworkId,
                     artTitle = c.Artwork.Title,
                     userName = c.UserName,
                     comment = c.Message!,
@@ -120,9 +124,9 @@ namespace Calligraphy.Controllers
                 .FirstOrDefaultAsync(c => c.CommentId == model.dashId);
             if (newComment != null)
             {
+                newComment.Reply = model.reply;
                 try
                 {
-                    newComment.Reply = model.reply;
                     _context.Update(newComment);
                     await _context.SaveChangesAsync();
                 }
@@ -151,10 +155,10 @@ namespace Calligraphy.Controllers
         {
             var allArtworks = _context.TbExhArtwork
                 .AsNoTracking()
-                .Where(a => a.CreatorId == Guid.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)))
+                .Where(a => a.Creator == User.FindFirstValue(ClaimTypes.NameIdentifier))
                 .Select(a => new ArtWorkViewModel
                 {
-                    ArtworkId = a.ArtworkId,
+                    ArtWorkId = a.ArtworkId,
                     Title = a.Title,
                     Description = a.Description,
                     CreatedYear = a.CreatedYear,
@@ -171,33 +175,31 @@ namespace Calligraphy.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> EditArtWork(ArtWorkViewModel model)
         {
-            if (model.ArtworkId == Guid.Empty)
+            if (model.ArtWorkId == Guid.Empty)
             {
                 return NotFound();
             }
             var artwork = await _context.TbExhArtwork
                 .AsNoTracking()
-                .FirstOrDefaultAsync(a => a.ArtworkId == model.ArtworkId);
+                .FirstOrDefaultAsync(a => a.ArtworkId == model.ArtWorkId);
             if (artwork == null)
             {
                 return NotFound();
             }
+            artwork.Title = model.Title;
+            artwork.Description = model.Description;
+            artwork.CreatedYear = model.CreatedYear;
+            artwork.Style = model.Style;
+            artwork.Material = model.Material;
+            artwork.Dimensions = model.Size;
             try
             {
-                artwork.Title = model.Title;
-                artwork.Description = model.Description;
-                artwork.CreatedYear = model.CreatedYear;
-                artwork.Style = model.Style;
-                artwork.Material = model.Material;
-                artwork.Dimensions = model.Size;
-                artwork.Modifier = User.FindFirstValue(ClaimTypes.NameIdentifier);
-                artwork.ModifyFrom = _clientIp.GetClientIP();
                 _context.Update(artwork);
                 await _context.SaveChangesAsync();
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error updating artwork with ID {Id}", model.ArtworkId);
+                _logger.LogError(ex, "Error updating artwork with ID {Id}", model.ArtWorkId);
                 return Json(new { success = false, message = "更新失敗" });
             }
             return Json(new { success = true });
@@ -220,10 +222,16 @@ namespace Calligraphy.Controllers
                 return NotFound();
             }
             artwork.IsVisible = model.IsVisible;
-            artwork.Modifier = User.FindFirstValue(ClaimTypes.NameIdentifier)?.ToUpper();
-            artwork.ModifyFrom = _clientIp.GetClientIP();
-            _context.Update(artwork);
-            await _context.SaveChangesAsync();
+            try
+            {
+                _context.Update(artwork);
+                await _context.SaveChangesAsync();
+            }
+            catch(Exception ex)
+            {
+                await _log.LogAsync(Guid.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)), "隱藏/顯示圖片操作", $"操作異常 {ex.Message}", _clientIp.GetClientIP());
+                return Json(new { success = false, message = "系統操作失敗" });
+            }
             return Ok();
         }
 
@@ -247,7 +255,7 @@ namespace Calligraphy.Controllers
             }
             var vm = new ArtWorkViewModel
             {
-                ArtworkId = artwork.ArtworkId,
+                ArtWorkId = artwork.ArtworkId,
                 Title = artwork.Title,
                 Description = artwork.Description,
                 CreatedYear = artwork.CreatedYear,
@@ -257,33 +265,6 @@ namespace Calligraphy.Controllers
                 IsVisible = artwork.IsVisible
             };
             return PartialView("_ArtWorkPartial", vm);
-        }
-
-        /// <summary>
-        /// 回傳作品圖片
-        /// </summary>
-        /// <param name="artWorkId"></param>
-        /// <returns></returns>
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> ArtWorkImages([FromBody] Guid artWorkId)
-        {
-            if(artWorkId == Guid.Empty)
-            {
-                return NotFound();
-            }
-            var artImage = await _context.TbExhArtwork
-                .AsNoTracking()
-                .Where(a => a.ArtworkId == artWorkId)
-                .Select(a => new
-                {
-                    a.ImageUrl,
-                }).FirstOrDefaultAsync();
-            if (artImage == null)
-            {
-                return NotFound();
-            }
-            return Json(new { success = true, artImage = artImage.ImageUrl });
         }
 
         //按讚紀錄
@@ -304,7 +285,7 @@ namespace Calligraphy.Controllers
             var likeRecord = _context.TbExhLike
                 .AsNoTracking()
                 .Include(i => i.Artwork)
-                .Where(i => i.Artwork.CreatorId == userId)
+                .Where(i => i.Artwork.Creator == userId.ToString())
                 .GroupBy(i => new { i.ArtworkId, i.Artwork.Title })
                 .Select(g => new DashboardViewModel
                 {

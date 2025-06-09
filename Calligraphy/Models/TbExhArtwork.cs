@@ -11,6 +11,8 @@ public partial class TbExhArtwork
 
     public string Title { get; set; } = null!;
 
+    public Guid? Writer { get; set; }
+
     public string? Description { get; set; }
 
     public string? ImageUrl { get; set; }
@@ -37,13 +39,11 @@ public partial class TbExhArtwork
 
     public string? Modifier { get; set; }
 
-    public Guid CreatorId { get; set; }
-
-    public virtual TbExhUser CreatorNavigation { get; set; } = null!;
-
     public virtual TbExhExhibition? Exhibition { get; set; }
 
     public virtual ICollection<TbExhComment> TbExhComment { get; set; } = new List<TbExhComment>();
 
     public virtual ICollection<TbExhLike> TbExhLike { get; set; } = new List<TbExhLike>();
+
+    public virtual TbExhUser? WriterNavigation { get; set; }
 }

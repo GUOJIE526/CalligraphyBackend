@@ -19,6 +19,11 @@
     {
         <h2>驗證信連結已過期</h2>
     }
+    @if (TempData["ChangeProfileError"] != null && (bool)TempData["ChangeProfileError"])
+    {
+        <h2>無效的使用者ID</h2>
+    }
+
     <p class="output">The page you are looking for might have been removed, had its name changed or is temporarily unavailable.</p>
     <p class="output">
         Please try to

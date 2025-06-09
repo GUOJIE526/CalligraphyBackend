@@ -1,4 +1,6 @@
-﻿$('#DashboardTable').dataTable({
+﻿import { fetchImage } from './showImg.js';
+
+$('#DashboardTable').dataTable({
     ajax: {
         url: '/Home/DashboardJson',
         type: 'GET',
@@ -65,6 +67,11 @@
                     </div>
                 `;
             }
+        },
+        {
+            data: 'artWorkId',
+            //不顯示但要抓得到資料
+            visible: false,
         }
     ]
 });
@@ -152,5 +159,29 @@ $('#LikeTable').dataTable({
             className: 'text-start',
             width: '10%'
         },
+        {
+            data: 'artId',
+            visible: false
+        }
     ]
 });
+
+let table = new DataTable('#DashboardTable')
+table.on('click', 'tbody tr', async function (e) {
+    //如果點的是按鈕或是他的子元素直接return
+    if ($(e.target).is('.ReplyBtn') || $(e.target).closest('.ReplyBtn').length > 0) return;
+
+    //取得該row的Id
+    let data = table.row(this).data();
+    let id = data.artWorkId; // 獲取該筆資料的 ID
+
+    await fetchImage(id, data.artTitle); // 使用 fetchImage 函數來獲取圖片
+});
+
+let likeTable = new DataTable('#LikeTable')
+likeTable.on('click', 'tbody tr', async function (e) {
+    //取得該row的Id
+    let data = likeTable.row(this).data();
+    let id = data.artId; // 獲取該筆資料的 ID
+    await fetchImage(id, data.artTitle); // 使用 fetchImage 函數來獲取圖片
+})

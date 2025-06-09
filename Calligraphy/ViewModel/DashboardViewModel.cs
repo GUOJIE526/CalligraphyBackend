@@ -9,6 +9,9 @@ namespace Calligraphy.ViewModel
     public class DashboardViewModel
     {
         public Guid dashId { get; set; }
+
+        public Guid artWorkId { get; set; }
+
         [Display(Name = "作品")]
         public string artTitle { get; set; } = null!;
 

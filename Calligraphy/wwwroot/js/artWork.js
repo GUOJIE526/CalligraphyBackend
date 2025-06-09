@@ -1,4 +1,6 @@
-﻿$('#ArtTable').dataTable({
+﻿import { fetchImage } from './showImg.js';
+
+$('#ArtTable').dataTable({
     ajax: {
         url: '/Home/AllArtworkJson',
         type: 'GET',
@@ -52,7 +54,7 @@
             }
         },
         {
-            data: 'artworkId',
+            data: 'artWorkId',
             render: function (data) {
                 return `
                     <div class = "text-nowrap">
@@ -85,50 +87,50 @@ $(document).on('change', '.toggle-visible', async function () {
 })
 
 let table = new DataTable('#ArtTable')
-const imgCache = new Map();// 用來緩存圖片的 Map
 table.on('click', 'tbody tr', async function (e) {
     //如果點的是按鈕或是他的子元素直接return
     if ($(e.target).is('.EditBtn') || $(e.target).is('.toggle-visible') || $(e.target).closest('.EditBtn').length > 0) return;
 
     //取得該row的Id
     let data = table.row(this).data();
-    let id = data.artworkId; // 獲取該筆資料的 ID
+    let id = data.artWorkId; // 獲取該筆資料的 ID
 
-    //檢查快取有沒有圖
-    if (imgCache.has(id)) {
-        const imgUrl = imgCache.get(id);
-        //清空圖片
-        $('#PicModal .Picture').empty();
-        let Img = `<img src="${imgUrl}" alt="${data[0]}" class="img-fluid" loading="lazy" style="max-width:100%; height:auto;" />`;
-        //動態插入圖片
-        $('.Picture').html(Img);
-        $('#PicModal').modal('show'); // 顯示模態框
-        return;
-    }
+    await fetchImage(id, data.title); // 使用 showImg.js 中的函數來顯示圖片
+//    //檢查快取有沒有圖
+//    if (imgCache.has(id)) {
+//        const imgUrl = imgCache.get(id);
+//        //清空圖片
+//        $('#PicModal .Picture').empty();
+//        let Img = `<img src="${imgUrl}" alt="${data[0]}" class="img-fluid" loading="lazy" style="max-width:100%; height:auto;" />`;
+//        //動態插入圖片
+//        $('.Picture').html(Img);
+//        $('#PicModal').modal('show'); // 顯示模態框
+//        return;
+//    }
 
-    let response = await fetch(`/Home/ArtWorkImages/${id}`, {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-            'X-Requested-With': 'XMLHttpRequest',  // 用來標示這是一個 AJAX 請求
-            'RequestVerificationToken': $('input[name="__RequestVerificationToken"]').val()  // 防護 token
-        },
-        body: JSON.stringify(id),
-    });
+//    let response = await fetch(`/Art/ArtWorkImages/${id}`, {
+//        method: 'POST',
+//        headers: {
+//            'Content-Type': 'application/json',
+//            'X-Requested-With': 'XMLHttpRequest',  // 用來標示這是一個 AJAX 請求
+//            'RequestVerificationToken': $('input[name="__RequestVerificationToken"]').val()  // 防護 token
+//        },
+//        body: JSON.stringify(id),
+//    });
 
-    if (response.ok) {
-        let result = await response.json(); // 解析為 JSON
-        //存圖片進去imgCache
-        imgCache.set(id, result.artImage);
-        //清空圖片
-        $('#PicModal .Picture').empty();
-        let Img = `<img src="${result.artImage}" alt="${data[0]}" class="img-fluid" loading="lazy" style="max-width:100%; height:auto;" />`;
-        //動態插入圖片
-        $('.Picture').html(Img);
-        $('#PicModal').modal('show'); // 顯示模態框
-    } else {
-        alert('Not Found!');
-    }
+//    if (response.ok) {
+//        let result = await response.json(); // 解析為 JSON
+//        //存圖片進去imgCache
+//        imgCache.set(id, result.artImage);
+//        //清空圖片
+//        $('#PicModal .Picture').empty();
+//        let Img = `<img src="${result.artImage}" alt="${data[0]}" class="img-fluid" loading="lazy" style="max-width:100%; height:auto;" />`;
+//        //動態插入圖片
+//        $('.Picture').html(Img);
+//        $('#PicModal').modal('show'); // 顯示模態框
+//    } else {
+//        alert('Not Found!');
+//    }
 });
 
 //動態加載reply內容

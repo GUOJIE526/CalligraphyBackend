@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System.Security.Claims;
 
 namespace Calligraphy.Controllers
 {
@@ -111,8 +112,6 @@ namespace Calligraphy.Controllers
                 DisplayName = model.Name,
                 PasswordHash = BCrypt.Net.BCrypt.HashPassword(model.Password),
                 Role = "Artist",//之後再想怎麼改成不寫死
-                Creator = model.Email,
-                CreateFrom = _clientIp.GetClientIP(),
                 MailConfirmcode = emailToken,
                 MailConfirmdate = DateTime.Now.AddMinutes(10),
             };
@@ -127,12 +126,12 @@ namespace Calligraphy.Controllers
                                                                                         <p>請點擊以下連結以完成帳號驗證：</p>
                                                                                         <p><a href=""{confirmLink}"">{confirmLink}</a></p>
                                                                                         <p>此連結將於 10 分鐘內失效。</p>");
-                await _log.LogAsync(user.UserId, "Register", $"使用者 {user.DisplayName} ({user.Email}) 註冊成功", _clientIp.GetClientIP(), _clientIp.GetClientIP());
+                await _log.LogAsync(user.UserId, "Register", $"使用者 {user.DisplayName} ({user.Email}) 註冊成功", _clientIp.GetClientIP());
             }
             catch (TaskCanceledException)
             {
                 _logger.LogError("Email sending timed out.");
-                await _log.LogAsync(user.UserId, "RegisterError", $"使用者 {user.DisplayName} ({user.Email}) 註冊時發生錯誤: 郵件發送超時", _clientIp.GetClientIP(), _clientIp.GetClientIP());
+                await _log.LogAsync(user.UserId, "RegisterError", $"使用者 {user.DisplayName} ({user.Email}) 註冊時發生錯誤: 郵件發送超時", _clientIp.GetClientIP());
             }
             return RedirectToAction("RegisterRemind", "SignUp", new {email = user.Email});
         }
@@ -174,18 +173,19 @@ namespace Calligraphy.Controllers
             var confirmLink = Url.Action("ConfirmEmail", "SignUp", new { token = user.MailConfirmcode, email = user.Email }, Request.Scheme);
             try
             {
+                _context.Update(user);
                 await _context.SaveChangesAsync();
                 await _emailService.SendAsync(user.Email, "RuoliCalligraphy驗證信", $@"
                                                                                         <p>親愛的使用者您好，</p>
                                                                                         <p>請點擊以下連結以完成帳號驗證：</p>
                                                                                         <p><a href=""{confirmLink}"">{confirmLink}</a></p>
                                                                                         <p>此連結將於 10 分鐘內失效。</p>");
-                await _log.LogAsync(user.UserId, "ResendConfirmEmail", $"使用者 {user.DisplayName} ({user.Email}) 重新寄送驗證信", _clientIp.GetClientIP(), _clientIp.GetClientIP());
+                await _log.LogAsync(user.UserId, "ResendConfirmEmail", $"使用者 {user.DisplayName} ({user.Email}) 重新寄送驗證信", _clientIp.GetClientIP());
             }
             catch (TaskCanceledException)
             {
                 _logger.LogError("Email sending timed out.");
-                await _log.LogAsync(user.UserId, "ResendConfirmEmailError", $"使用者 {user.DisplayName} ({user.Email}) 重新寄送驗證信時發生錯誤: 郵件發送超時", _clientIp.GetClientIP(), _clientIp.GetClientIP());
+                await _log.LogAsync(user.UserId, "ResendConfirmEmailError", $"使用者 {user.DisplayName} ({user.Email}) 重新寄送驗證信時發生錯誤: 郵件發送超時", _clientIp.GetClientIP());
             }
             TempData["ResendMessage"] = true;
             return RedirectToAction("RegisterRemind", "SignUp", new { email = user.Email });
@@ -207,9 +207,20 @@ namespace Calligraphy.Controllers
                 return RedirectToAction("Error");
             }
             user.MailConfirm = true;
-            await _context.SaveChangesAsync();
-            await _authHelper.SignInUserAsync(user, true);
-            return RedirectToAction("MailConfirmWelcome", "SignUp");
+            try
+            {
+                _context.Update(user);
+                await _context.SaveChangesAsync();
+                await _authHelper.SignInUserAsync(user, true);
+                return RedirectToAction("MailConfirmWelcome", "SignUp");
+            }
+            catch (DbUpdateConcurrencyException ex)
+            {
+                _logger.LogError(ex, "Error confirming email");
+                ModelState.AddModelError("", "驗證失敗，請稍後再試");
+                await _log.LogAsync(user.UserId, "ConfirmEmailError", $"使用者 {user.DisplayName} ({user.Email}) 驗證信連結失敗: {ex.Message}", _clientIp.GetClientIP());
+                return View("Error");
+            }
         }
 
         /// <summary>
@@ -251,6 +262,7 @@ namespace Calligraphy.Controllers
             var resetLink = Url.Action("ResetPassword", "SignUp", new { token = resetToken, email = user.Email }, Request.Scheme);
             try
             {
+                _context.Update(user);
                 await _context.SaveChangesAsync();
                 await _emailService.SendAsync(user.Email, "RuoliCalligraphy密碼重設信", $@"
                                                                                         <p>親愛的使用者您好，</p>
@@ -261,7 +273,7 @@ namespace Calligraphy.Controllers
             catch (TaskCanceledException)
             {
                 _logger.LogError("Email sending timed out.");
-                await _log.LogAsync(user.UserId, "ForgotPasswordError", $"使用者 {user.DisplayName} ({user.Email}) 忘記密碼時發生錯誤: 郵件發送超時", _clientIp.GetClientIP(), _clientIp.GetClientIP());
+                await _log.LogAsync(user.UserId, "ForgotPasswordError", $"使用者 {user.DisplayName} ({user.Email}) 忘記密碼時發生錯誤: 郵件發送超時", _clientIp.GetClientIP());
             }
             TempData["ForgotPassword"] = true;
             return RedirectToAction("ForgotPassword", "SignUp");
@@ -341,17 +353,110 @@ namespace Calligraphy.Controllers
             string email = model.Email;
             try
             {
+                _context.Update(user);
                 await _context.SaveChangesAsync();
-                await _log.LogAsync(user.UserId, "ResetPassword", $"使用者 {user.DisplayName} ({user.Email}) 重設密碼", _clientIp.GetClientIP(), _clientIp.GetClientIP());
+                await _log.LogAsync(user.UserId, "ResetPassword", $"使用者 {user.DisplayName} ({user.Email}) 重設密碼", _clientIp.GetClientIP());
             }
             catch(DbUpdateConcurrencyException ex)
             {
                 _logger.LogError(ex, "Error updating user password");
                 ModelState.AddModelError("ConfirmPassword", "更新密碼失敗，請稍後再試");
-                await _log.LogAsync(user.UserId, "ResetPasswordError", $"使用者 {user.DisplayName} ({user.Email}) 重設密碼失敗: {ex.Message}", _clientIp.GetClientIP(), _clientIp.GetClientIP());
+                await _log.LogAsync(user.UserId, "ResetPasswordError", $"使用者 {user.DisplayName} ({user.Email}) 重設密碼失敗: {ex.Message}", _clientIp.GetClientIP());
                 return View();
             }
             return RedirectToAction("ResetPassword", "SignUp", new { token, email });
+        }
+
+        /// <summary>
+        /// 修改個人資料頁面
+        /// </summary>
+        /// <returns></returns>
+        public IActionResult ChangeProfile()
+        {
+            var nowLoginUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var user = _context.TbExhUser.Find(Guid.Parse(nowLoginUserId));
+            if (user == null)
+            {
+                TempData["ChangeProfileError"] = true;
+                return RedirectToAction("Error", "SignUp");
+            }
+            var model = new ChangeProfileViewModel
+            {
+                Name = user.DisplayName
+            };
+            return View(model);
+        }
+
+        /// <summary>
+        /// 修改個人資料頁面
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> ChangeProfile(ChangeProfileViewModel model)
+        {
+            if (!ModelState.IsValid)
+            {
+                return View(model);
+            }
+            var nowLoginUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var user = await _context.TbExhUser.FindAsync(Guid.Parse(nowLoginUserId));
+            if (user == null)
+            {
+                TempData["ChangeProfileError"] = true;
+                return RedirectToAction("Error", "SignUp");
+            }
+            //檢查姓名是否含有系統保留字
+            if (User.IsInRole("Artist"))
+            {
+                if (model.Name == "Admin" || model.Name == "Administrator" || model.Name == "admin" || model.Name == "administrator")
+                {
+                    ModelState.AddModelError("", "姓名含有系統保留字");
+                    return View(model);
+                }
+            }
+            if (string.IsNullOrEmpty(model.Password))
+            {
+                ModelState.AddModelError("", "請輸入密碼");
+                return View(model);
+            }
+            if (string.IsNullOrEmpty(model.Name))
+            {
+                ModelState.AddModelError("", "請輸入大名");
+                return View(model);
+            }
+            if (model.Password != model.ConfirmPassword)
+            {
+                ModelState.AddModelError("", "密碼不一致");
+                return View(model);
+            }
+            //檢查新密碼是否與舊密碼相同
+            if (!string.IsNullOrEmpty(model.Password) && !BCrypt.Net.BCrypt.Verify(model.Password, user.PasswordHash))
+            {
+                user.PasswordHash = BCrypt.Net.BCrypt.HashPassword(model.Password);
+            }
+            else if (!string.IsNullOrEmpty(model.Password) && BCrypt.Net.BCrypt.Verify(model.Password, user.PasswordHash))
+            {
+                ModelState.AddModelError("", "新密碼不能與舊密碼相同");
+                return View(model);
+            }
+            user.DisplayName = model.Name;
+            try
+            {
+                _context.Update(user);
+                await _context.SaveChangesAsync();
+                await _log.LogAsync(user.UserId, "ChangeProfile", $"使用者 {user.DisplayName} 修改個人資料", _clientIp.GetClientIP());
+                TempData["ChangeProfileSuccess"] = true;
+                return RedirectToAction("ChangeProfile", "SignUp");
+            }
+            catch (DbUpdateConcurrencyException ex)
+            {
+                _logger.LogError(ex, "Error updating user profile");
+                ModelState.AddModelError("", "更新個人資料失敗，請稍後再試");
+                await _log.LogAsync(user.UserId, "ChangeProfileError", $"使用者 {user.DisplayName} 修改個人資料失敗: {ex.Message}", _clientIp.GetClientIP());
+                return View(model);
+            }
         }
 
         /// <summary>

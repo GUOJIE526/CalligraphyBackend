@@ -8,6 +8,9 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/material-components-web/14.0.0/material-components-web.min.css" rel="stylesheet" />
     <link href="https://cdn.datatables.net/2.1.7/css/dataTables.material.css" rel="stylesheet" />
 }
+<div style="display:none;">
+    @Html.AntiForgeryToken()
+</div>
 <div>
     <div class="card">
         <div class="card-body">
@@ -77,10 +80,22 @@
     </div>
 </div>
 
+<!--圖片視窗-->
+<div class="modal fade" id="PicModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-body Picture">
+                ...
+            </div>
+        </div>
+    </div>
+</div>
+
+
 @section Scripts{
     <script src="https://cdnjs.cloudflare.com/ajax/libs/material-components-web/14.0.0/material-components-web.min.js"></script>
     <script src="https://cdn.datatables.net/2.1.7/js/dataTables.js"></script>
     <script src="https://cdn.datatables.net/2.1.7/js/dataTables.material.js"></script>
     <script src="https://cdn.datatables.net/fixedheader/3.3.2/js/dataTables.fixedHeader.min.js"></script>
-    <script src="~/js/dashboard.js" asp-append-version="true"></script>
+    <script type="module" src="~/js/dashboard.js" asp-append-version="true"></script>
 }
