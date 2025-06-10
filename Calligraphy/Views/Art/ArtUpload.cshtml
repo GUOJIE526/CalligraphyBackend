@@ -1,4 +1,5 @@
-﻿@using Calligraphy.ViewModel
+﻿@using Calligraphy.Services
+@using Calligraphy.ViewModel
 @model ArtViewModel
 @{
     ViewData["Title"] = "作品上傳";
@@ -56,7 +57,7 @@
             </div>
             <div class="row col-lg-5">
                 <div class="inputGroup">
-                    <input asp-for="Year" class="input" type="text" placeholder="創作日期 ex:@DateTime.Now.ToString("yyyy/MM/dd")" autocomplete="off" />
+                    <input asp-for="Year" class="input" type="text" placeholder="創作日期 ex:@TimeHelper.GetTaipeiTimeNow().ToString("yyyy/MM/dd")" autocomplete="off" />
                     <span>@Html.ValidationMessageFor(model => model.Year, "", new { @class = "text-danger" })</span>
                 </div>
                 <div class="inputGroup">

@@ -55,6 +55,19 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
 
 var app = builder.Build();
 
+//隱藏X-Powered-By標頭，防止洩漏使用的技術棧
+app.Use(async (context, next) =>
+{
+    context.Response.OnStarting(() =>
+    {
+        context.Response.Headers.Remove("Server");
+       // 移除 X-Powered-By 標頭
+        context.Response.Headers.Remove("X-Powered-By");
+        return Task.CompletedTask;
+    });
+    await next();
+});
+
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {

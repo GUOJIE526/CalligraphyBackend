@@ -113,7 +113,7 @@ namespace Calligraphy.Controllers
                 PasswordHash = BCrypt.Net.BCrypt.HashPassword(model.Password),
                 Role = "Artist",//之後再想怎麼改成不寫死
                 MailConfirmcode = emailToken,
-                MailConfirmdate = DateTime.Now.AddMinutes(10),
+                MailConfirmdate = TimeHelper.GetTaipeiTimeNow().AddMinutes(10),
             };
             _context.TbExhUser.Add(user);
             //建立驗證連結
@@ -170,7 +170,7 @@ namespace Calligraphy.Controllers
                 return View("RegisterRemind");
             }
             user.MailConfirmcode = Guid.NewGuid().ToString();
-            user.MailConfirmdate = DateTime.Now.AddMinutes(10);
+            user.MailConfirmdate = TimeHelper.GetTaipeiTimeNow().AddMinutes(10);
             //建立驗證連結
             var confirmLink = Url.Action("ConfirmEmail", "SignUp", new { token = user.MailConfirmcode, email = user.Email }, Request.Scheme);
             try
@@ -203,7 +203,7 @@ namespace Calligraphy.Controllers
         {
             var user = await _context.TbExhUser
                 .FirstOrDefaultAsync(u => u.MailConfirmcode == token && u.Email == email);
-            if (user == null || user.MailConfirmdate < DateTime.Now)
+            if (user == null || user.MailConfirmdate < TimeHelper.GetTaipeiTimeNow())
             {
                 TempData["ConfirmError"] = true;
                 return RedirectToAction("Error");
@@ -258,7 +258,7 @@ namespace Calligraphy.Controllers
             }
             var resetToken = Guid.NewGuid().ToString();
             user.RestpwdToken = resetToken;
-            user.RestpwdLimitdate = DateTime.Now.AddMinutes(10);
+            user.RestpwdLimitdate = TimeHelper.GetTaipeiTimeNow().AddMinutes(10);
             user.RestpwdConfirm = false;
             //建立驗證連結
             var resetLink = Url.Action("ResetPassword", "SignUp", new { token = resetToken, email = user.Email }, Request.Scheme);
@@ -294,7 +294,7 @@ namespace Calligraphy.Controllers
                 ViewBag.Token = user.RestpwdToken;
                 ViewBag.Name = user.DisplayName;
                 ViewBag.Email = user.Email;
-                if (user.RestpwdLimitdate < DateTime.Now)
+                if (user.RestpwdLimitdate < TimeHelper.GetTaipeiTimeNow())
                 {
                     TempData["LimitError"] = true;
                     return RedirectToAction("Error");
@@ -325,7 +325,7 @@ namespace Calligraphy.Controllers
                 ViewBag.Token = user.RestpwdToken;
             }
             //檢查用戶是否存在, 驗證時間是否過期
-            if (user == null || user.RestpwdLimitdate < DateTime.Now)
+            if (user == null || user.RestpwdLimitdate < TimeHelper.GetTaipeiTimeNow())
             {
                 ModelState.AddModelError("", "連結已失效或使用者不存在");
                 return View("ResetPassword", model);

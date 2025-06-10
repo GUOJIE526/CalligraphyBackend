@@ -1,4 +1,5 @@
-﻿using Calligraphy.Services.Interfaces;
+﻿using Calligraphy.Services;
+using Calligraphy.Services.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using System.Security.Claims;
 
@@ -48,13 +49,13 @@ namespace Calligraphy.Models
             {
                 if (entry.State == EntityState.Added)
                 {
-                    entry.Property("CreateDate").CurrentValue = DateTimeOffset.Now;
+                    entry.Property("CreateDate").CurrentValue = TimeHelper.GetTaipeiTimeNowOffset(DateTimeOffset.UtcNow);
                     entry.Property("Creator").CurrentValue = _httpContextAccessor.HttpContext?.User?.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? "";
                     entry.Property("CreateFrom").CurrentValue = _ip.GetClientIP() ?? "";
                 }
                 else if (entry.State == EntityState.Modified)
                 {
-                    entry.Property("ModifyDate").CurrentValue = DateTimeOffset.Now;
+                    entry.Property("ModifyDate").CurrentValue = TimeHelper.GetTaipeiTimeNowOffset(DateTimeOffset.UtcNow);
                     entry.Property("Modifier").CurrentValue = _httpContextAccessor.HttpContext?.User.Identity?.Name ?? "";
                     entry.Property("ModifyFrom").CurrentValue = _ip.GetClientIP() ?? "";
                 }

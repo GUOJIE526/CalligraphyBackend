@@ -32,7 +32,7 @@ namespace Calligraphy.Services
             await _httpContextAccessor.HttpContext!.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, principal, new AuthenticationProperties
             {
                 IsPersistent = rememberMe,
-                ExpiresUtc = DateTimeOffset.Now.AddMinutes(30)
+                ExpiresUtc = TimeHelper.GetTaipeiTimeNowOffset(DateTimeOffset.UtcNow).AddMinutes(30)
             });
         }
         //登出邏輯
