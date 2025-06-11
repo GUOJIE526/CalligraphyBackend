@@ -83,7 +83,9 @@
     <h2>@ViewData["Title"]</h2>
     <p>我們已發送一封驗證信至您的信箱，請點擊信中的連結以啟用帳號。</p>
     <p>驗證完成後，您將自動登入並返回首頁。</p>
-    <form asp-action="ResendConfirmEmail" asp-controller="SignUp" method="post">
+    <p>如未收到驗證信請檢查垃圾郵件</p>
+    <p style="font-size:small;">P.S.因網路伺服器可能負載, 30分鐘後仍未收到請聯絡客服或是按下重新寄送。</p>
+    <form asp-action="ResendConfirmEmail" style="margin:2em;" asp-controller="SignUp" method="post">
         <input type="hidden" name="email" value="@ViewBag.Email" />
         <!-- From Uiverse.io by eirikvold -->
         <button type="submit">

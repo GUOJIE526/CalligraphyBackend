@@ -11,7 +11,7 @@ $('#ArtTable').dataTable({
     fixedHeader: {
         header: true
     },
-    scrollY: 350,
+    scrollY: 400,
     language: {
         url: 'https://cdn.datatables.net/plug-ins/2.1.5/i18n/zh-HANT.json',
     },
@@ -61,6 +61,9 @@ $('#ArtTable').dataTable({
                         <a data-id="${data}" class="EditBtn btn btn-info" data-bs-toggle="modal" data-bs-target="#EditModal">
                             <i class="ti ti-edit" style="font-size:18px;"></i>
                         </a>
+                        <a data-id="${data}" class="deleteBtn btn btn-danger">
+                            <i class="ti ti-trash" style="font-size:18px;"></i>
+                        </a>
                     </div>
                 `;
             }
@@ -89,7 +92,7 @@ $(document).on('change', '.toggle-visible', async function () {
 let table = new DataTable('#ArtTable')
 table.on('click', 'tbody tr', async function (e) {
     //如果點的是按鈕或是他的子元素直接return
-    if ($(e.target).is('.EditBtn') || $(e.target).is('.toggle-visible') || $(e.target).closest('.EditBtn').length > 0) return;
+    if ($(e.target).is('.EditBtn') || $(e.target).closest('.EditBtn').length > 0 || $(e.target).is('.toggle-visible') || $(e.target).is('.deleteBtn') || $(e.target).closest('.deleteBtn').length > 0) return;
 
     //取得該row的Id
     let data = table.row(this).data();
@@ -152,4 +155,42 @@ $(document).on('click', '.EditBtn', async function () {
 
     // 顯示模態框
     $('#EditModal').modal('show');
+});
+
+$(document).on('click', '.deleteBtn', async function () {
+    let id = $(this).data('id'); // 獲取該筆資料的 ID
+    Swal.fire({
+        title: '確定要刪除這個作品嗎?',
+        text: "刪除後將無法恢復!",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        confirmButtonText: '確定',
+        cancelButtonColor: '#d33',
+    }).then(async (result) => {
+        if (result.isConfirmed) {
+            let response = await fetch(`/Home/DeleteArtWork/${id}`, {
+                method: 'POST',
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest',  // 用來標示這是一個 AJAX 請求
+                    'RequestVerificationToken': $('input[name="__RequestVerificationToken"]').val()  // 防護 token
+                }
+            });
+            if (response.ok) {
+                Swal.fire({
+                    icon: "success",
+                    title: "作品已刪除!",
+                    showConfirmButton: false,
+                    timer: 1500
+                });
+                $('#ArtTable').DataTable().ajax.reload(null, false);  // 刷新表格資料
+            } else {
+                Swal.fire({
+                    icon: "error",
+                    title: "Oops...",
+                    text: "刪除失敗，請稍後再試",
+                });
+            }
+        }
+    });
 });

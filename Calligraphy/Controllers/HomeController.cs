@@ -29,118 +29,6 @@ namespace Calligraphy.Controllers
 
         public IActionResult Index()
         {
-            var newComment = _context.TbExhComment
-                .AsNoTracking()
-                .Include(c => c.Artwork)
-                .Where(c => !string.IsNullOrEmpty(c.Message) && c.Artwork.Creator == User.FindFirstValue(ClaimTypes.NameIdentifier)).Select(c => new DashboardViewModel
-                {
-                    dashId = c.CommentId,
-                    artTitle = c.Artwork.Title,
-                    userName = c.UserName,
-                    comment = c.Message!,
-                    commentCreate = c.CreateDate,
-                    reply = c.Reply
-                })
-                .OrderByDescending(c => c.commentCreate)
-                .ToList();
-            return View(newComment);
-        }
-
-        /// <summary>
-        /// Retrieves a JSON representation of recent comments and their associated artwork details.
-        /// </summary>
-        /// <remarks>This method queries the database for comments that are associated with artworks and
-        /// have a non-empty message. The result includes details such as the comment ID, artwork title, username,
-        /// comment message, creation date, and any replies.</remarks>
-        /// <returns>A JSON-formatted <see cref="IActionResult"/> containing a list of comments and their associated artwork
-        /// details. Each item in the list is represented as a <see cref="DashboardViewModel"/>.</returns>
-        public IActionResult DashboardJson()
-        {
-            //TbExhArtwork, TbExhComment關聯帶出List
-            var newComment = _context.TbExhComment
-                .AsNoTracking()
-                .Include(c => c.Artwork)
-                .Where(c => !string.IsNullOrEmpty(c.Message) && c.Artwork.Creator == User.FindFirstValue(ClaimTypes.NameIdentifier)).Select(c => new DashboardViewModel
-                {
-                    dashId = c.CommentId,
-                    artWorkId = c.Artwork.ArtworkId,
-                    artTitle = c.Artwork.Title,
-                    userName = c.UserName,
-                    comment = c.Message!,
-                    commentCreate = c.CreateDate,
-                    reply = c.Reply
-                })
-                .OrderByDescending(c => c.commentCreate)
-                .ToList();
-            return Json(newComment);
-        }
-
-        /// <summary>
-        /// Reply視窗檢視
-        /// </summary>
-        /// <param name="Id"></param>
-        /// <returns></returns>
-        public async Task<IActionResult> ReplyPartial(Guid Id)
-        {
-            if(Id == Guid.Empty)
-            {
-                return NotFound();
-            }
-            var comment = await _context.TbExhComment
-                .AsNoTracking()
-                .Include(c => c.Artwork)
-                .FirstOrDefaultAsync(c => c.CommentId == Id);
-            if(comment == null)
-            {
-                return NotFound();
-            }
-            var vm = new DashboardViewModel
-            {
-                dashId = comment!.CommentId,
-                artTitle = comment.Artwork.Title,
-                userName = comment.UserName,
-                comment = comment.Message!,
-                reply = comment.Reply
-            };
-            return PartialView("_ReplyPartial", vm);
-        }
-
-        /// <summary>
-        /// Reply視窗回覆
-        /// </summary>
-        /// <param name="model"></param>
-        /// <returns></returns>
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Reply(DashboardViewModel model)
-        {
-            if (model.dashId == Guid.Empty)
-            {
-                return NotFound();
-            }
-            var newComment = await _context.TbExhComment
-                .AsNoTracking()
-                .Include(c => c.Artwork)
-                .FirstOrDefaultAsync(c => c.CommentId == model.dashId);
-            if (newComment != null)
-            {
-                newComment.Reply = model.reply;
-                try
-                {
-                    _context.Update(newComment);
-                    await _context.SaveChangesAsync();
-                }
-                catch(DbUpdateConcurrencyException ex)
-                {
-                    _logger.LogError(ex, "Error updating comment with ID {Id}", model.dashId);
-                    return Json(new { success = false, message = "回覆失敗" });
-                }
-            }
-            return Json(new { success = true });
-        }
-
-        public IActionResult Privacy()
-        {
             return View();
         }
 
@@ -149,7 +37,6 @@ namespace Calligraphy.Controllers
             return View();
         }
 
-       
         //所有已上傳作品
         public IActionResult AllArtworkJson()
         {
@@ -205,6 +92,39 @@ namespace Calligraphy.Controllers
             return Json(new { success = true });
         }
 
+        //刪除該筆圖片
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> DeleteArtWork(Guid Id)
+        {
+            var artwork = await _context.TbExhArtwork
+                .AsNoTracking()
+                .FirstOrDefaultAsync(a => a.ArtworkId == Id);
+            if (artwork == null)
+            {
+                return NotFound();
+            }
+            var likes = await _context.TbExhLike
+                .AsNoTracking()
+                .Where(l => l.ArtworkId == Id)
+                .ToListAsync();
+            if (likes.Any())
+            {
+                _context.TbExhLike.RemoveRange(likes);
+            }
+            _context.TbExhArtwork.Remove(artwork);
+            try
+            {
+                await _context.SaveChangesAsync();
+                await _log.LogAsync(Guid.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)), "刪除圖片", $"{User.Identity.Name} 刪除圖片ID: {Id}", _clientIp.GetClientIP());
+                return Json(new { success = true });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error deleting artwork with ID {Id}", Id);
+                return Json(new { success = false, message = "刪除失敗" });
+            }
+        }
 
         [HttpPost]
         [ValidateAntiForgeryToken]

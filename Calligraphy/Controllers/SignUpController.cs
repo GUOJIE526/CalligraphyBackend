@@ -20,8 +20,9 @@ namespace Calligraphy.Controllers
         private readonly ILogger<SignUpController> _logger;
         private readonly IClientIpService _clientIp;
         private readonly ILogService _log;
+        private readonly ISignUpService _signup;
 
-        public SignUpController(CalligraphyContext context, AuthHelper authHelper, IEmailService emailService, ILogger<SignUpController> logger, IClientIpService clientIp, ILogService log)
+        public SignUpController(CalligraphyContext context, AuthHelper authHelper, IEmailService emailService, ILogger<SignUpController> logger, IClientIpService clientIp, ILogService log, ISignUpService signup)
         {
             _context = context;
             _authHelper = authHelper;
@@ -29,6 +30,7 @@ namespace Calligraphy.Controllers
             _logger = logger;
             _clientIp = clientIp;
             _log = log;
+            _signup = signup;
         }
 
         /// <summary>
@@ -90,52 +92,16 @@ namespace Calligraphy.Controllers
             {
                 return View(model);
             }
-            if (await _context.TbExhUser.AnyAsync(u => u.Email == model.Email))
+
+            var result = await _signup.SignUpAsync(model, (token, email) => Url.Action("ConfirmEmail", "SignUp", new { token, email }, Request.Scheme));
+
+            if (!result.IsSuccess)
             {
-                ModelState.AddModelError("Email", "帳號已存在");
+                ModelState.AddModelError("", result.Message);
                 return View(model);
             }
-            if (string.IsNullOrEmpty(model.Name))
-            {
-                ModelState.AddModelError("Name", "請輸入大名");
-                return View(model);
-            }
-            if (model.Name == "Admin" || model.Name == "Administrator" || model.Name == "admin" || model.Name == "administrator")
-            {
-                ModelState.AddModelError("Name", "姓名含有系統保留字");
-                return View(model);
-            }
-            string emailToken = Guid.NewGuid().ToString();
-            var user = new TbExhUser
-            {
-                Email = model.Email,
-                DisplayName = model.Name,
-                PasswordHash = BCrypt.Net.BCrypt.HashPassword(model.Password),
-                Role = "Artist",//之後再想怎麼改成不寫死
-                MailConfirmcode = emailToken,
-                MailConfirmdate = TimeHelper.GetTaipeiTimeNow().AddMinutes(10),
-            };
-            _context.TbExhUser.Add(user);
-            //建立驗證連結
-            var confirmLink = Url.Action("ConfirmEmail", "SignUp", new { token = emailToken, email = model.Email }, Request.Scheme);
-            try
-            {
-                await _context.SaveChangesAsync();
-                await _emailService.SendAsync(model.Email, "RuoliCalligraphy驗證信", $@"
-                                                                                        <p>親愛的使用者您好，</p>
-                                                                                        <p>請點擊以下連結以完成帳號驗證：</p>
-                                                                                        <p><a href=""{confirmLink}"">{confirmLink}</a></p>
-                                                                                        <p>此連結將於 10 分鐘內失效。</p>");
-                //通知我有人註冊帳號
-                await _emailService.SendAsync("hungkaojay@gmail.com", "有人註冊RuoliBackend", $"<p>{model.Email} 註冊新帳號</p>");
-                await _log.LogAsync(user.UserId, "Register", $"使用者 {user.DisplayName} ({user.Email}) 註冊成功", _clientIp.GetClientIP());
-            }
-            catch (TaskCanceledException)
-            {
-                _logger.LogError("Email sending timed out.");
-                await _log.LogAsync(user.UserId, "RegisterError", $"使用者 {user.DisplayName} ({user.Email}) 註冊時發生錯誤: 郵件發送超時", _clientIp.GetClientIP());
-            }
-            return RedirectToAction("RegisterRemind", "SignUp", new {email = user.Email});
+
+            return RedirectToAction("RegisterRemind", "SignUp", new {email = result.RedirectEmail});
         }
 
         /// <summary>

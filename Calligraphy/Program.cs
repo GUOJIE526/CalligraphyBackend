@@ -42,6 +42,9 @@ builder.Services.AddScoped<IClientIpService, GetClientIPService>();
 //註冊Log服務
 builder.Services.AddScoped<ILogService, LogService>();
 
+//註冊SignUp商業邏輯
+builder.Services.AddScoped<ISignUpService, SignUpService>();
+
 //驗證登入cookie
 builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
     .AddCookie(options =>
