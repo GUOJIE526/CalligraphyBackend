@@ -302,12 +302,6 @@ namespace Calligraphy.Controllers
                 ModelState.AddModelError("", "密碼不一致");
                 return View("ResetPassword", model);
             }
-            //檢查密碼是否為空
-            if (string.IsNullOrEmpty(model.Password) || string.IsNullOrEmpty(model.ConfirmPassword))
-            {
-                ModelState.AddModelError("", "密碼不可為空");
-                return View("ResetPassword", model);
-            }
             //檢查密碼是否與之前的密碼相同
             if (BCrypt.Net.BCrypt.Verify(model.Password, user.PasswordHash))
             {

@@ -1,0 +1,18 @@
+﻿@model IEnumerable<Calligraphy.Models.TbExhLog>
+
+@{
+    ViewData["Title"] = "Log紀錄";
+}
+@section Styles {
+    <link href="~/assets/css/styles.min.css" rel="stylesheet" />
+}
+
+<div class="container">
+    <h2 class="mb-3">Log紀錄</h2>
+
+    @foreach (var item in Model)
+    {
+        <p>@Html.DisplayFor(modelItem => item.Message) @Html.DisplayFor(modelItem => item.CreateDate) 來自於 @Html.DisplayFor(modelItem => item.CreateFrom)
+        </p>
+    }
+</div>

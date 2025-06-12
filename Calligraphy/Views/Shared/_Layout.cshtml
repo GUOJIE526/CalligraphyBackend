@@ -51,6 +51,17 @@
                                 <span class="hide-menu">作品檢視</span>
                             </a>
                         </li>
+                        @{
+                            if (User.IsInRole("Admin"))
+                            {
+                                <li class="sidebar-item">
+                                    <a class="sidebar-link" asp-area="" asp-controller="TBLogs" asp-action="Index" aria-expanded="false">
+                                        <i class="ti ti-clock-record"></i>
+                                        <span class="hide-menu">Log紀錄</span>
+                                    </a>
+                                </li>
+                            }
+                        }
                     </ul>
                 </nav>
                 <!-- End Sidebar navigation -->

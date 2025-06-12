@@ -25,10 +25,6 @@ namespace Calligraphy.Services
             {
                 return RegisterResult.Failure("此Email已被註冊過，請使用其他Email。");
             }
-            if (string.IsNullOrEmpty(model.Name))
-            {
-                return RegisterResult.Failure("請輸入姓名。");
-            }
             if (new[] {"admin", "administrator", "Admin", "ADMIN", "Administrator"}.Contains(model.Name))
             {
                 return RegisterResult.Failure("姓名不能是系統保留字。");

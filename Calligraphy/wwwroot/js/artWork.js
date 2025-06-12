@@ -50,7 +50,10 @@ $('#ArtTable').dataTable({
             render: function (data, type, row) {
                 //以checkbox顯示bool值
                 const checked = data ? 'checked' : '';
-                return `<input class="toggle-visible" type="checkbox" data-id="${row.artWorkId}" ${checked}>`;
+                return `<label class="switch">
+                          <input type="checkbox" class="toggle-visible" data-id="${row.artWorkId}" ${checked}>
+                          <span class="slider"></span>
+                        </label>`
             }
         },
         {
@@ -92,7 +95,7 @@ $(document).on('change', '.toggle-visible', async function () {
 let table = new DataTable('#ArtTable')
 table.on('click', 'tbody tr', async function (e) {
     //如果點的是按鈕或是他的子元素直接return
-    if ($(e.target).is('.EditBtn') || $(e.target).closest('.EditBtn').length > 0 || $(e.target).is('.toggle-visible') || $(e.target).is('.deleteBtn') || $(e.target).closest('.deleteBtn').length > 0) return;
+    if ($(e.target).closest('.EditBtn').length > 0 || $(e.target).closest('.switch').length > 0 || $(e.target).closest('.deleteBtn').length > 0) return;
 
     //取得該row的Id
     let data = table.row(this).data();

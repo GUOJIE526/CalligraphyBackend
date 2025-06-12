@@ -64,20 +64,10 @@ namespace Calligraphy.Controllers
                     }
                 }
             }
-            if (string.IsNullOrEmpty(model.Title))
-            {
-                ModelState.AddModelError("Title", "請輸入作品名稱");
-                return View(model);
-            }
             //還要檢查日期格式有沒有符合yyyy/MM/dd的格式
             if (!DateTime.TryParse(model.Year, out DateTime createdYear))
             {
                 ModelState.AddModelError("Year", "請輸入正確的創作日期格式(yyyy/MM/dd)");
-                return View(model);
-            }
-            if (string.IsNullOrEmpty(model.Year))
-            {
-                ModelState.AddModelError("Year", "請輸入創作年份");
                 return View(model);
             }
             if (ModelState.IsValid)
@@ -99,6 +89,7 @@ namespace Calligraphy.Controllers
                 try
                 {
                     await _context.SaveChangesAsync();
+                    await _log.LogAsync(Guid.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)), "ArtUpload", $"{User.Identity.Name} 作品 {art.Title} 上傳成功", _clientIp.GetClientIP());
                     TempData["SuccessMessage"] = true;
                     return RedirectToAction("ArtUpload");
                 }
@@ -106,7 +97,7 @@ namespace Calligraphy.Controllers
                 {
                     // 處理資料庫儲存錯誤
                     _logger.LogError(ex, "資料庫儲存失敗: {Message}", ex.Message);
-                    await _log.LogAsync(Guid.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)), "ArtController.ArtUpload", ex.Message, _clientIp.GetClientIP());
+                    await _log.LogAsync(Guid.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)), "ArtUpload", $"上傳失敗: {ex.Message}", _clientIp.GetClientIP());
                     return View("ArtUpload");
                 }
             }
