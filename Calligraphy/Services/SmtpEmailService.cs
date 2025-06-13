@@ -15,13 +15,13 @@ namespace Calligraphy.Services
         {
             using (var client = new SmtpClient())
             {
-                client.Host = _config["Smtp:Host"];
-                client.Port = int.Parse(_config["Smtp:Port"]);
+                client.Host = _config["SMTP:Host"];
+                client.Port = int.Parse(_config["SMTP:Port"]);
                 client.EnableSsl = true;
-                client.Credentials = new NetworkCredential(_config["Smtp:From"], _config["Smtp:Password"]);
+                client.Credentials = new NetworkCredential(_config["SMTP:From"], _config["SMTP:Password"]);
                 var mailMessage = new MailMessage
                 {
-                    From = new MailAddress(_config["Smtp:From"]),
+                    From = new MailAddress(_config["SMTP:From"]),
                     Subject = subject,
                     Body = mailBody,
                     IsBodyHtml = true,

@@ -41,8 +41,6 @@ public partial class TbExhArtwork
 
     public virtual TbExhExhibition? Exhibition { get; set; }
 
-    public virtual ICollection<TbExhComment> TbExhComment { get; set; } = new List<TbExhComment>();
-
     public virtual ICollection<TbExhLike> TbExhLike { get; set; } = new List<TbExhLike>();
 
     public virtual TbExhUser? WriterNavigation { get; set; }

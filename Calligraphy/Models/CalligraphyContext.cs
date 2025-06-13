@@ -17,11 +17,11 @@ public partial class CalligraphyContext : DbContext
 
     public virtual DbSet<TbExhArtwork> TbExhArtwork { get; set; }
 
-    public virtual DbSet<TbExhComment> TbExhComment { get; set; }
-
     public virtual DbSet<TbExhExhibition> TbExhExhibition { get; set; }
 
     public virtual DbSet<TbExhLike> TbExhLike { get; set; }
+
+    public virtual DbSet<TbExhLine> TbExhLine { get; set; }
 
     public virtual DbSet<TbExhLog> TbExhLog { get; set; }
 
@@ -84,47 +84,6 @@ public partial class CalligraphyContext : DbContext
             entity.HasOne(d => d.WriterNavigation).WithMany(p => p.TbExhArtwork)
                 .HasForeignKey(d => d.Writer)
                 .HasConstraintName("FK_ARTWORK_CREATOR");
-        });
-
-        modelBuilder.Entity<TbExhComment>(entity =>
-        {
-            entity.HasKey(e => e.CommentId).HasName("PK__TB_EXH_C__C55F98D07E115907");
-
-            entity.ToTable("TB_EXH_COMMENT");
-
-            entity.Property(e => e.CommentId)
-                .HasDefaultValueSql("(newid())")
-                .HasColumnName("COMMENT_ID");
-            entity.Property(e => e.ArtworkId).HasColumnName("ARTWORK_ID");
-            entity.Property(e => e.CreateDate).HasColumnName("CREATE_DATE");
-            entity.Property(e => e.CreateFrom)
-                .HasMaxLength(50)
-                .HasColumnName("CREATE_FROM");
-            entity.Property(e => e.Creator)
-                .HasMaxLength(50)
-                .HasColumnName("CREATOR");
-            entity.Property(e => e.Message)
-                .HasMaxLength(500)
-                .HasColumnName("MESSAGE");
-            entity.Property(e => e.Modifier)
-                .HasMaxLength(50)
-                .HasColumnName("MODIFIER");
-            entity.Property(e => e.ModifyDate).HasColumnName("MODIFY_DATE");
-            entity.Property(e => e.ModifyFrom)
-                .HasMaxLength(50)
-                .HasColumnName("MODIFY_FROM");
-            entity.Property(e => e.Reply)
-                .HasMaxLength(500)
-                .HasColumnName("REPLY");
-            entity.Property(e => e.ReplyTime).HasColumnName("REPLY_TIME");
-            entity.Property(e => e.UserName)
-                .HasMaxLength(100)
-                .HasColumnName("USER_NAME");
-
-            entity.HasOne(d => d.Artwork).WithMany(p => p.TbExhComment)
-                .HasForeignKey(d => d.ArtworkId)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK__TB_EXH_CO__ARTWO__45F365D3");
         });
 
         modelBuilder.Entity<TbExhExhibition>(entity =>
@@ -194,6 +153,38 @@ public partial class CalligraphyContext : DbContext
                 .HasForeignKey(d => d.ArtworkId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK__TB_EXH_LI__ARTWO__49C3F6B7");
+        });
+
+        modelBuilder.Entity<TbExhLine>(entity =>
+        {
+            entity.HasKey(e => e.LineId).HasName("PK__TB_EXH_L__79EC5F432CACC43D");
+
+            entity.ToTable("TB_EXH_LINE");
+
+            entity.Property(e => e.LineId)
+                .HasDefaultValueSql("(newid())")
+                .HasColumnName("Line_Id");
+            entity.Property(e => e.CreateDate).HasColumnName("CREATE_DATE");
+            entity.Property(e => e.CreateFrom)
+                .HasMaxLength(50)
+                .HasColumnName("CREATE_FROM");
+            entity.Property(e => e.Creator)
+                .HasMaxLength(50)
+                .HasColumnName("CREATOR");
+            entity.Property(e => e.LineUserId).HasMaxLength(50);
+            entity.Property(e => e.Modifier)
+                .HasMaxLength(50)
+                .HasColumnName("MODIFIER");
+            entity.Property(e => e.ModifyDate).HasColumnName("MODIFY_DATE");
+            entity.Property(e => e.ModifyFrom)
+                .HasMaxLength(50)
+                .HasColumnName("MODIFY_FROM");
+            entity.Property(e => e.UserId).HasColumnName("USER_ID");
+
+            entity.HasOne(d => d.User).WithMany(p => p.TbExhLine)
+                .HasForeignKey(d => d.UserId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_ExhAuthor_User");
         });
 
         modelBuilder.Entity<TbExhLog>(entity =>

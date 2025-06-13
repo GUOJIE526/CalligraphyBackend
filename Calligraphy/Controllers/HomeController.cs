@@ -220,6 +220,46 @@ namespace Calligraphy.Controllers
             return Json(likeRecord);
         }
 
+        /// <summary>
+        /// 按下加line好友要先存作者ID進TbExhLine
+        /// </summary>
+        /// <param name="Id"></param>
+        /// <returns></returns>
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> AddLineFriend([FromBody] Guid Id)
+        {
+            if (Id == Guid.Empty)
+            {
+                return NotFound();
+            }
+            var existingLineFriend = await _context.TbExhLine
+                .AsNoTracking()
+                .FirstOrDefaultAsync(l => l.UserId == Id);
+            //先刪除已存在的Line好友資料，避免重複新增
+            if (existingLineFriend != null)
+            {
+                _context.TbExhLine.Remove(existingLineFriend);
+                await _context.SaveChangesAsync();
+            }
+            var lineFriend = new TbExhLine
+            {
+                UserId = Id
+            };
+            _context.TbExhLine.Add(lineFriend);
+            try
+            {
+                await _context.SaveChangesAsync();
+                await _log.LogAsync(Id, "新增Line好友", $"新增Line好友ID: {Id}", _clientIp.GetClientIP());
+                return Json(new { success = true });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error adding Line friend with ID {Id}", Id);
+                return Json(new { success = false, message = "新增失敗" });
+            }
+        }
+
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()
         {
