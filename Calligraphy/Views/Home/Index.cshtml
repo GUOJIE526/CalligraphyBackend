@@ -35,7 +35,7 @@
         </div>
     </div>
 </div>
-<div class="alert alert-info">
+@* <div class="alert alert-info">
     <p>📢 若您想收到「有人按讚您的作品」的 LINE 通知：</p>
     <ul>
         <li>請點下方按鈕加入我們的 LINE 官方帳號</li>
@@ -46,7 +46,7 @@
     </a>
     <p class="mt-2">加入後請不要關閉 LINE，系統會自動顯示「開啟通知」按鈕，請點一下完成綁定 ✅</p>
 </div>
-
+ *@
 
 <!--圖片視窗-->
 <div class="modal fade" id="PicModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
@@ -67,29 +67,29 @@
     <script src="https://cdn.datatables.net/fixedheader/3.3.2/js/dataTables.fixedHeader.min.js"></script>
     <script type="module" src="~/js/dashboard.min.js" asp-append-version="true"></script>
     <script type="text/javascript">
-        function Addline() {
-            // 使用者點擊加入 LINE 好友後，開啟 LINE 官方帳號的連結
-            debugger;
-            const userId = '@User.FindFirstValue(ClaimTypes.NameIdentifier)';
-            const token = document.querySelector('input[name="__RequestVerificationToken"]').value;
-            fetch('/Home/AddLineFriend', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'RequestVerificationToken': token
-                },
-                body: JSON.stringify(userId)
-            })
-            .then(response => {
-                if (response.ok) {
-                    window.open("https://line.me/R/ti/p/%7E@615clzqr", '_blank');
-                } else {
-                    console.error('加入 LINE 好友失敗');
-                }
-            })
-            .catch(error => {
-                console.error('加入 LINE 好友時發生錯誤:', error);
-            });
-        }
+        // function Addline() {
+        //     // 使用者點擊加入 LINE 好友後，開啟 LINE 官方帳號的連結
+        //     debugger;
+        //     const userId = '@User.FindFirstValue(ClaimTypes.NameIdentifier)';
+        //     const token = document.querySelector('input[name="__RequestVerificationToken"]').value;
+        //     fetch('/Home/AddLineFriend', {
+        //         method: 'POST',
+        //         headers: {
+        //             'Content-Type': 'application/json',
+        //             'RequestVerificationToken': token
+        //         },
+        //         body: JSON.stringify(userId)
+        //     })
+        //     .then(response => {
+        //         if (response.ok) {
+        //             window.open("https://line.me/R/ti/p/%7E@615clzqr", '_blank');
+        //         } else {
+        //             console.error('加入 LINE 好友失敗');
+        //         }
+        //     })
+        //     .catch(error => {
+        //         console.error('加入 LINE 好友時發生錯誤:', error);
+        //     });
+        // }
     </script>
 }

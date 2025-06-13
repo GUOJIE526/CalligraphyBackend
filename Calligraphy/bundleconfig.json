@@ -16,5 +16,11 @@
     "inputFiles": [
       "wwwroot/js/Dashboard.js"
     ]
+  },
+  {
+    "outputFileName": "wwwroot/js/ArtWorkUpload.min.js",
+    "inputFiles": [
+      "wwwroot/js/ArtWorkUpload.js"
+    ]
   }
 ]

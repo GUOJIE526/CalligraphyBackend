@@ -96,7 +96,6 @@
 </form>
 
 @section Scripts{
-
     @if (TempData["SuccessMessage"] != null && (bool)TempData["SuccessMessage"])
     {
         <script type="text/javascript">
@@ -108,69 +107,5 @@
 
         </script>
     }
-
-     <script type="text/javascript">
-            var label = document.querySelector('.custum-file-upload');
-            var text = document.querySelector('.text');
-            var icon = document.querySelector('.icon');
-            var picbody = document.querySelector('.picbody');
-            var magnifier = document.querySelector('.magnifier');
-            var submit = document.querySelector('.submitBtn');
-            var inputbox = document.querySelectorAll('input');
-
-            //實作類似C# string.IsNullorEmpty
-            function IsNullOrEmpty(str) {
-                return str === null || str === undefined || str === '';
-            }
-            //檢查日期有沒有符合yyyy/MM/dd格式
-            function IsValidDate(dateString) {
-                var regex = /^\d{4}[\/.]\d{2}[\/.]\d{2}$/;
-                if (!regex.test(dateString)) {
-                    return false;
-                }
-                var parts = dateString.split(/[\/.]/);
-                var year = parseInt(parts[0], 10);
-                var month = parseInt(parts[1], 10) - 1; // Months are zero-based
-                var day = parseInt(parts[2], 10);
-                var date = new Date(year, month, day);
-                return date.getFullYear() === year && date.getMonth() === month && date.getDate() === day;
-            };
-
-            //inputbox[0]是圖檔 上傳後可以顯示圖片
-            inputbox[0].addEventListener('change', function(e) {
-                const file = e.target.files[0];
-                if (file) {
-                    const reader = new FileReader();
-                    reader.onload = function(e) {
-                        const img =new Image();
-                        img.onload = function(){
-                            picbody.innerHTML = '<img src="' + e.target.result + '" class="img-fluid" alt="Responsive image">';
-                            label.style.backgroundImage = 'url(' + e.target.result + ')';
-                            label.style.backgroundSize = 'cover';
-                            label.style.backgroundPosition = 'center center';
-                            text.style.display = 'none';
-                            icon.style.display = 'none';
-                            magnifier.style.display = 'block';
-                        }
-                        img.src = e.target.result;
-                    };
-                    reader.readAsDataURL(file);
-                } else {
-                    label.style.backgroundImage = 'none';
-                    text.style.display = 'block';
-                    icon.style.display = 'block';
-                    magnifier.style.display = 'none';
-                    picbody.innerHTML = '';
-                }
-            });
-            // Delete button functionality
-            const deleteButton = document.querySelector('.delete');
-            deleteButton.addEventListener('click', function() {
-                label.style.backgroundImage = 'none';
-                text.style.display = 'block';
-                icon.style.display = 'block';
-                inputbox[0].value = '';
-                magnifier.style.display = "none";
-            });
-        </script>
+    <script src="~/js/artworkupload.min.js" asp-append-version="true"></script>
 }
