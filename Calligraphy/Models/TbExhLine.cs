@@ -9,7 +9,7 @@ public partial class TbExhLine
 
     public string? LineUserId { get; set; }
 
-    public Guid UserId { get; set; }
+    public Guid? UserId { get; set; }
 
     public DateTimeOffset? CreateDate { get; set; }
 
@@ -23,5 +23,5 @@ public partial class TbExhLine
 
     public string? Modifier { get; set; }
 
-    public virtual TbExhUser User { get; set; } = null!;
+    public virtual TbExhUser? User { get; set; }
 }

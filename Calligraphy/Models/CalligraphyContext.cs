@@ -183,7 +183,6 @@ public partial class CalligraphyContext : DbContext
 
             entity.HasOne(d => d.User).WithMany(p => p.TbExhLine)
                 .HasForeignKey(d => d.UserId)
-                .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_ExhAuthor_User");
         });
 

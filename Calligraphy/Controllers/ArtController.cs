@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System.Configuration;
 using System.Security.Claims;
 
 namespace Calligraphy.Controllers
@@ -16,13 +17,15 @@ namespace Calligraphy.Controllers
         private readonly CalligraphyContext _context;
         private readonly IClientIpService _clientIp;
         private readonly ILogService _log;
+        private readonly IConfiguration _config;
 
-        public ArtController(ILogger<ArtController> logger, CalligraphyContext context, IClientIpService clientIp, ILogService log)
+        public ArtController(ILogger<ArtController> logger, CalligraphyContext context, IClientIpService clientIp, ILogService log, IConfiguration config)
         {
             _logger = logger;
             _context = context;
             _clientIp = clientIp;
             _log = log;
+            _config = config;
         }
 
         /// <summary>
@@ -42,6 +45,8 @@ namespace Calligraphy.Controllers
         [HttpPost]
         public async Task<IActionResult> ArtUpload(ArtViewModel model)
         {
+
+            isRock.LineBot.Bot bot = new isRock.LineBot.Bot(_config["LineBot:ChannelAccessToken"]);
             // 檢查檔案是否存在
             if (model.File != null && model.File.Length > 0)
             {
@@ -85,11 +90,21 @@ namespace Calligraphy.Controllers
                     Dimensions = model.Size,
                     IsVisible = model.IsVisible,
                 };
+                //讀取TbExhLine的用戶ID放進List中
+                var lineUsers = await _context.TbExhLine
+                    .AsNoTracking()
+                    .Where(e => e.LineUserId != null)
+                    .Select(e => e.LineUserId)
+                    .ToListAsync();
+                List<string> msg = new List<string>();
+                msg.Add($"新作品 {art.Title} 已發布趕緊去看看吧~");
+
                 _context.TbExhArtwork.Add(art);
                 try
                 {
                     await _context.SaveChangesAsync();
                     await _log.LogAsync(Guid.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)), "ArtUpload", $"{User.Identity.Name} 作品 {art.Title} 上傳成功", _clientIp.GetClientIP());
+                    bot.PushMulticast(lineUsers, msg);
                     TempData["SuccessMessage"] = true;
                     return RedirectToAction("ArtUpload");
                 }
