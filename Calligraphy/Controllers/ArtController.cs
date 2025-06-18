@@ -93,7 +93,7 @@ namespace Calligraphy.Controllers
                 //讀取TbExhLine的用戶ID放進List中
                 var lineUsers = await _context.TbExhLine
                     .AsNoTracking()
-                    .Where(e => e.LineUserId != null)
+                    .Where(e => e.LineUserId != null && e.Notify == true && e.Unfollow == false)
                     .Select(e => e.LineUserId)
                     .ToListAsync();
                 List<string> msg = new List<string>();
@@ -104,7 +104,10 @@ namespace Calligraphy.Controllers
                 {
                     await _context.SaveChangesAsync();
                     await _log.LogAsync(Guid.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)), "ArtUpload", $"{User.Identity.Name} 作品 {art.Title} 上傳成功", _clientIp.GetClientIP());
-                    bot.PushMulticast(lineUsers, msg);
+                    if (lineUsers.Count > 0)
+                    {
+                        bot.PushMulticast(lineUsers, msg);
+                    }
                     TempData["SuccessMessage"] = true;
                     return RedirectToAction("ArtUpload");
                 }

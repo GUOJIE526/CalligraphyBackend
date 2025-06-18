@@ -164,6 +164,7 @@ public partial class CalligraphyContext : DbContext
             entity.Property(e => e.LineId)
                 .HasDefaultValueSql("(newid())")
                 .HasColumnName("Line_Id");
+            entity.Property(e => e.Block).HasColumnName("BLOCK");
             entity.Property(e => e.CreateDate).HasColumnName("CREATE_DATE");
             entity.Property(e => e.CreateFrom)
                 .HasMaxLength(50)
@@ -179,6 +180,8 @@ public partial class CalligraphyContext : DbContext
             entity.Property(e => e.ModifyFrom)
                 .HasMaxLength(50)
                 .HasColumnName("MODIFY_FROM");
+            entity.Property(e => e.Notify).HasColumnName("NOTIFY");
+            entity.Property(e => e.Unfollow).HasColumnName("UNFOLLOW");
             entity.Property(e => e.UserId).HasColumnName("USER_ID");
 
             entity.HasOne(d => d.User).WithMany(p => p.TbExhLine)

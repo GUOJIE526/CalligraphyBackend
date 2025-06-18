@@ -11,6 +11,12 @@ public partial class TbExhLine
 
     public Guid? UserId { get; set; }
 
+    public bool Notify { get; set; }
+
+    public bool Unfollow { get; set; }
+
+    public bool? Block { get; set; }
+
     public DateTimeOffset? CreateDate { get; set; }
 
     public string? CreateFrom { get; set; }

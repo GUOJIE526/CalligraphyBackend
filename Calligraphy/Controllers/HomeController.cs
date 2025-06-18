@@ -55,6 +55,23 @@ namespace Calligraphy.Controllers
                     IsVisible = a.IsVisible,
                 }).ToList();
 
+            var allArt = _context.TbExhArtwork
+                .AsNoTracking()
+                .Select(a => new ArtWorkViewModel
+                {
+                    ArtWorkId = a.ArtworkId,
+                    Title = a.Title,
+                    Description = a.Description,
+                    CreatedYear = a.CreatedYear,
+                    Style = a.Style,
+                    Material = a.Material,
+                    Size = a.Dimensions,
+                    IsVisible = a.IsVisible,
+                }).ToList();
+
+            if (User.IsInRole("Admin"))
+                return Json(allArt);
+
             return Json(allArtworks);
         }
 
