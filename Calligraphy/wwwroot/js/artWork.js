@@ -1,6 +1,6 @@
 ﻿import { fetchImage } from './showImg.js';
 
-$('#ArtTable').dataTable({
+let table = $('#ArtTable').DataTable({
     ajax: {
         url: '/Home/AllArtworkJson',
         type: 'GET',
@@ -11,7 +11,6 @@ $('#ArtTable').dataTable({
     fixedHeader: {
         header: true
     },
-    scrollY: 400,
     language: {
         url: 'https://cdn.datatables.net/plug-ins/2.1.5/i18n/zh-HANT.json',
     },
@@ -93,7 +92,6 @@ $(document).on('change', '.toggle-visible', async function () {
     }
 })
 
-let table = new DataTable('#ArtTable')
 table.on('click', 'tbody tr', async function (e) {
     //如果點的是按鈕或是他的子元素直接return
     if ($(e.target).closest('.EditBtn').length > 0 || $(e.target).closest('.switch').length > 0 || $(e.target).closest('.deleteBtn').length > 0) return;
