@@ -17,6 +17,7 @@ $('#ArtTable').dataTable({
     },
     columns: [
         { data: 'title' },
+        { data: 'views'},
         {
             data: 'description',
             render: function (data) {

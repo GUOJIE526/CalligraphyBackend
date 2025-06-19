@@ -47,6 +47,7 @@ namespace Calligraphy.Controllers
                 {
                     ArtWorkId = a.ArtworkId,
                     Title = a.Title,
+                    Views = a.Views,
                     Description = a.Description,
                     CreatedYear = a.CreatedYear,
                     Style = a.Style,
@@ -61,6 +62,7 @@ namespace Calligraphy.Controllers
                 {
                     ArtWorkId = a.ArtworkId,
                     Title = a.Title,
+                    Views = a.Views,
                     Description = a.Description,
                     CreatedYear = a.CreatedYear,
                     Style = a.Style,

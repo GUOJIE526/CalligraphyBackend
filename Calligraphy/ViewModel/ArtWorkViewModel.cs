@@ -10,6 +10,9 @@ namespace Calligraphy.ViewModel
         [Display( Name = "作品")]
         public string Title { get; set; } = null!;
 
+        [Display( Name = "瀏覽人次")]
+        public int Views { get; set; }
+
         [Display( Name = "作品簡介")]
         public string? Description { get; set; }
 

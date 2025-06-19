@@ -75,6 +75,7 @@ public partial class CalligraphyContext : DbContext
             entity.Property(e => e.Title)
                 .HasMaxLength(200)
                 .HasColumnName("TITLE");
+            entity.Property(e => e.Views).HasColumnName("VIEWS");
             entity.Property(e => e.Writer).HasColumnName("WRITER");
 
             entity.HasOne(d => d.Exhibition).WithMany(p => p.TbExhArtwork)
