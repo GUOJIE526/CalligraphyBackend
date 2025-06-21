@@ -13,6 +13,8 @@ $('#LikeTable').dataTable({
     fixedHeader: {
         header: true
     },
+    responsive: true,
+    scrollX: true,
     language: {
         url: 'https://cdn.datatables.net/plug-ins/2.1.5/i18n/zh-HANT.json',
     },

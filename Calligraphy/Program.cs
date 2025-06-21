@@ -34,7 +34,7 @@ builder.Services.AddHttpContextAccessor();
 builder.Services.AddScoped<AuthHelper>();
 
 // 註冊 Email 服務，使用 SmtpEmailService 實作 IEmailService
-builder.Services.AddScoped<IEmailService, SmtpEmailService>();
+builder.Services.AddTransient<IEmailService, SmtpEmailService>();
 
 //註冊IP服務
 builder.Services.AddScoped<IClientIpService, GetClientIPService>();
