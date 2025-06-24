@@ -30,6 +30,4 @@ public partial class TbExhLog
     public string? ModifyFrom { get; set; }
 
     public string? Modifier { get; set; }
-
-    public virtual TbExhUser? User { get; set; }
 }

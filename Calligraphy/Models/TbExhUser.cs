@@ -44,6 +44,4 @@ public partial class TbExhUser
     public virtual ICollection<TbExhArtwork> TbExhArtwork { get; set; } = new List<TbExhArtwork>();
 
     public virtual ICollection<TbExhLine> TbExhLine { get; set; } = new List<TbExhLine>();
-
-    public virtual ICollection<TbExhLog> TbExhLog { get; set; } = new List<TbExhLog>();
 }

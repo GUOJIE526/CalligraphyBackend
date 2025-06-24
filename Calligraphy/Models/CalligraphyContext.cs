@@ -230,10 +230,6 @@ public partial class CalligraphyContext : DbContext
                 .HasMaxLength(50)
                 .HasColumnName("TARGET_TYPE");
             entity.Property(e => e.UserId).HasColumnName("USER_ID");
-
-            entity.HasOne(d => d.User).WithMany(p => p.TbExhLog)
-                .HasForeignKey(d => d.UserId)
-                .HasConstraintName("FK__TB_EXH_LO__USER___4D94879B");
         });
 
         modelBuilder.Entity<TbExhUser>(entity =>

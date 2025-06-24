@@ -23,8 +23,7 @@ namespace Calligraphy.Controllers
         {
             var logs = await _context.TbExhLog
                 .AsNoTracking()
-                .Include(g => g.User)
-                .Where(g => g.Action == "ArtUpload")
+                .Where(g => g.Action == "ArtUpload" || g.Action == "AddLike")
                 .OrderByDescending(g => g.CreateDate)
                 .ToListAsync();
             return View(logs);
