@@ -50,8 +50,14 @@ namespace Calligraphy.Controllers
             // 檢查檔案是否存在
             if (model.File != null && model.File.Length > 0)
             {
+                var iisStoragePath = _config["ArtStorage:StoragePath"];
+                if(!Directory.Exists(iisStoragePath))
+                {
+                    //新增資料夾
+                    Directory.CreateDirectory(iisStoragePath);
+                }
                 // 儲存檔案的路徑
-                var filePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "Images", model.File.FileName);
+                var filePath = Path.Combine(iisStoragePath, model.File.FileName);
                 // 儲存檔案
                 using (var stream = new FileStream(filePath, FileMode.Create))
                 {
@@ -104,7 +110,7 @@ namespace Calligraphy.Controllers
                 {
                     await _context.SaveChangesAsync();
                     await _log.LogAsync(Guid.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)), "ArtUpload", $"{User.Identity.Name} 作品 {art.Title} 上傳成功", _clientIp.GetClientIP());
-                    if (lineUsers.Count > 0)
+                    if (lineUsers.Count > 0 && art.IsVisible == true)
                     {
                         bot.PushMulticast(lineUsers, msg);
                     }

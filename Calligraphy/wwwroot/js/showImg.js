@@ -25,7 +25,7 @@ export async function fetchImage(id, dataAlt) {
 function showImgModel(imgUrl, dataAlt) {
     // 顯示圖片的模態框
     $("#PicModal .Picture").empty();
-    let img = `<img src="${imgUrl}" alt="${dataAlt}" class="img-fluid" loading="lazy" style="max-width:100%; height:auto;" />`;
+    let img = `<img src="https://ruoliwrite.com${imgUrl}" alt="${dataAlt}" class="img-fluid" loading="lazy" style="max-width:100%; height:auto;" />`;
     $('.Picture').html(img);
     $('#PicModal').modal('show');
 }
