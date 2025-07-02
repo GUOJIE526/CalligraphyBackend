@@ -363,3 +363,4 @@ MigrationBackup/
 FodyWeavers.xsd
 /Calligraphy/Images
 /Calligraphy/wwwroot/Images
+/Calligraphy/appsettings.json
